@@ -1,33 +1,25 @@
-import express from "express";
-import { body } from "express-validator";
-import { userController } from "../controller/user.controller";
+import express from 'express';
+import { joiValidation } from '../middlewares/validation.middleware';
+import { loginSchema, registerSchema, updateUserSchema } from '../validators/user.validators';
+import { requireAuth, requireAdmin } from '../middlewares/auth.middleware';
+import { UserController } from '../controller/user.controller';
 
 const router = express.Router();
 
-router.post(
-  "/register",
-  [
-    body("email").isEmail().withMessage("Email must be valid"),
-    body("password")
-      .trim()
-      .isLength({ min: 4, max: 20 })
-      .withMessage("Password must be between 4 and 20 characters"),
-    body("firstName").trim().notEmpty().withMessage("First name is required"),
-    body("lastName").trim().notEmpty().withMessage("Last name is required"),
-  ],
-  userController.register
-);
+// Public routes
+router.post('/register', joiValidation(registerSchema), UserController.register);
+router.post('/login', joiValidation(loginSchema), UserController.login);
+router.post('/logout', requireAuth, UserController.logout);
 
-router.post(
-  "/login",
-  [
-    body("email").isEmail().withMessage("Email must be valid"),
-    body("password")
-      .trim()
-      .notEmpty()
-      .withMessage("You must supply a password"),
-  ],
-  userController.login
-);
+// Authenticated user routes
+router.get('/me', requireAuth, UserController.getOwnUser);
+router.put('/me', requireAuth, joiValidation(updateUserSchema), UserController.updateOwnUser);
 
-export { router as userRouter };
+// Admin routes
+router.get('/all', requireAdmin, UserController.getAllUsers);
+router.get('/:userId', requireAdmin, UserController.getUser);
+router.put('/:userId', requireAdmin, joiValidation(updateUserSchema), UserController.updateUser);
+router.post('/:userId/deactivate', requireAdmin, UserController.deactivateUser);
+router.post('/:userId/reactivate', requireAdmin, UserController.reactivateUser);
+
+export default router;
