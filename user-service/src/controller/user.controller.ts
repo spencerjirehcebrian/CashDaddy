@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserService } from '../services/db/user.service';
-import { sessionService } from '../services/session/session.service';
 import { sendResponse } from '../utils/response';
-import { config } from '../config';
 import { BadRequestError, NotFoundError } from '../types/error.types';
+import { AuthPayload } from '../types/auth.types';
+import { AuthService } from '../services/auth/auth.service';
 
 export class UserController {
   static async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -20,31 +20,21 @@ export class UserController {
     try {
       const { email, password } = req.body;
       const authPayload = await UserService.login(email, password);
-
-      const sessionId = await sessionService.createSession(authPayload);
-      res.cookie('sessionId', sessionId, { httpOnly: true, secure: config.NODE_ENV === 'production' });
-      sendResponse(res, 200, true, 'Login successful', { authPayload });
+      const token = AuthService.generateToken(authPayload);
+      sendResponse(res, 200, true, 'Login successful', { token, user: authPayload });
     } catch (error) {
       next(error);
     }
   }
-
-  static async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const sessionId = req.cookies['sessionId'];
-      if (sessionId) {
-        await sessionService.deleteSession(sessionId);
-      }
-      res.clearCookie('sessionId');
-      sendResponse(res, 200, true, 'Logout successful');
-    } catch (error) {
-      next(error);
-    }
+  static async logout(_req: Request, res: Response, _next: NextFunction): Promise<void> {
+    // With JWT, we don't need to do anything server-side for logout
+    // The client should discard the token
+    sendResponse(res, 200, true, 'Logout successful');
   }
 
   static async getOwnUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.user!.userId;
+      const userId = (req.user as AuthPayload).userId;
       const user = await UserService.getUserById(userId);
       sendResponse(res, 200, true, 'User retrieved successfully', user);
     } catch (error) {
@@ -54,7 +44,7 @@ export class UserController {
 
   static async updateOwnUser(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.user!.userId;
+      const userId = (req.user as AuthPayload).userId;
       const updateData = req.body;
       const updatedUser = await UserService.updateUser(userId, updateData);
       sendResponse(res, 200, true, 'User updated successfully', updatedUser);

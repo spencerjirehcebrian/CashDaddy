@@ -1,16 +1,15 @@
 import { Schema } from 'mongoose';
 import { IUserProfile } from './user-profile.interface';
 import { IKYC } from './kyc.interface';
-import { IPaymentMethod } from './payment-method.interface';
 
 export enum UserRole {
-  USER = 'user',
-  ADMIN = 'admin'
+  USER = 'USER',
+  ADMIN = 'ADMIN'
 }
 
 export enum UserStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive'
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE'
 }
 
 export interface IUser extends Document {
@@ -22,7 +21,6 @@ export interface IUser extends Document {
   status: UserStatus;
   userProfile?: Schema.Types.ObjectId | IUserProfile;
   kyc?: Schema.Types.ObjectId | IKYC;
-  paymentMethods: Schema.Types.ObjectId[] | IPaymentMethod[];
   isValidPassword(password: string): Promise<boolean>;
 }
 export interface UserDocument extends IUser, Document {}

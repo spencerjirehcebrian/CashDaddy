@@ -1,9 +1,11 @@
+/// <reference path="../types/express.d.ts" />
 import { Request, Response, NextFunction } from 'express';
 import { NotAuthorizedError } from '../types/error.types';
-import { sessionService } from '../services/session/session.service';
 import { UserRole } from '../interfaces/user.interface';
 import { AuthPayload } from '../types/auth.types';
 import logger from '../utils/logger';
+import jwt from 'jsonwebtoken';
+import { config } from '../config';
 
 type RoleChecker = (role: string) => boolean;
 
@@ -13,48 +15,47 @@ interface AuthOptions {
   ownershipParamName?: string;
 }
 
+const JWT_SECRET = config.JWT_SECRET;
+
 export const authMiddleware = (options: AuthOptions = {}) => {
   const { roles, checkOwnership = false, ownershipParamName = 'userId' } = options;
 
   return async (req: Request, _res: Response, next: NextFunction) => {
     try {
-      const sessionId = req.cookies['sessionId'];
+      const token = req.header('Authorization')?.replace('Bearer ', '');
 
-      if (!sessionId) {
+      if (!token) {
         throw new NotAuthorizedError('Authentication required');
       }
 
-      const authPayload = await sessionService.getAuthPayload(sessionId);
+      const decoded = jwt.verify(token, JWT_SECRET!) as AuthPayload;
 
-      if (!authPayload) {
-        throw new NotAuthorizedError('Invalid session');
+      if (!decoded) {
+        throw new NotAuthorizedError('Invalid token');
       }
 
       // Check roles if specified
       if (roles) {
-        const hasRequiredRole = Array.isArray(roles) ? roles.includes(authPayload.role as UserRole) : roles(authPayload.role);
+        const hasRequiredRole = Array.isArray(roles) ? roles.includes(decoded.role as UserRole) : roles(decoded.role);
 
         if (!hasRequiredRole) {
           throw new NotAuthorizedError('Insufficient privileges');
         }
       }
 
-      // Attach the authPayload to the request
-      req.user = authPayload;
+      // Attach the decoded payload to the request
+      req.user = decoded;
 
       // Check ownership if required
-      if (checkOwnership && authPayload.role !== UserRole.ADMIN) {
+      if (checkOwnership && decoded.role !== UserRole.ADMIN) {
         const resourceUserId = getResourceUserId(req, ownershipParamName);
         logger.info(ownershipParamName + ' ' + req);
-        logger.info(`Ownership check: ${authPayload.userId} ${resourceUserId}`);
+        logger.info(`Ownership check: ${decoded.userId} ${resourceUserId}`);
 
-        if (authPayload.userId !== resourceUserId) {
-          throw new NotAuthorizedError('Not authorized to access this resource ' + resourceUserId + ' ' + authPayload.userId);
+        if (decoded.userId !== resourceUserId) {
+          throw new NotAuthorizedError('Not authorized to access this resource ' + resourceUserId + ' ' + decoded.userId);
         }
       }
-
-      // Refresh the session
-      await sessionService.refreshSession(sessionId);
 
       next();
     } catch (error) {

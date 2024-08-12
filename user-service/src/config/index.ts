@@ -5,6 +5,7 @@ dotenv.config({});
 class Config {
   public MONGO_URI: string | undefined;
   public JWT_SECRET: string | undefined;
+  public JWT_EXPIRATION: string | undefined;
   public REDIS_URL: string | undefined;
   public PORT: string | undefined;
   public KAFKA_BROKERS: string | undefined;
@@ -19,6 +20,7 @@ class Config {
     this.PORT = process.env.PORT || '3000';
     this.KAFKA_BROKERS = process.env.KAFKA_BROKERS || 'localhost:29092';
     this.NODE_ENV = process.env.NODE_ENV || 'development';
+    this.JWT_EXPIRATION = process.env.JWT_EXPIRATION || '1h';
   }
 
   public validateConfig(): void {
