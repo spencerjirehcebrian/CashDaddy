@@ -4,22 +4,26 @@ import { loginSchema, registerSchema, updateUserSchema } from '../validators/use
 import { requireAuth, requireAdmin } from '../middlewares/auth.middleware';
 import { UserController } from '../controller/user.controller';
 
-const router = express.Router();
+const router = (userController: UserController) => {
+  const userRouter = express.Router();
 
-// Public routes
-router.post('/register', joiValidation(registerSchema), UserController.register);
-router.post('/login', joiValidation(loginSchema), UserController.login);
-router.post('/logout', requireAuth, UserController.logout);
+  // Public routes
+  userRouter.post('/register', joiValidation(registerSchema), userController.register.bind(userController));
+  userRouter.post('/login', joiValidation(loginSchema), userController.login.bind(userController));
+  userRouter.post('/logout', requireAuth, userController.logout.bind(userController));
 
-// Authenticated user routes
-router.get('/me', requireAuth, UserController.getOwnUser);
-router.put('/me', requireAuth, joiValidation(updateUserSchema), UserController.updateOwnUser);
+  // Authenticated user routes
+  userRouter.get('/me', requireAuth, userController.getOwnUser.bind(userController));
+  userRouter.put('/me', requireAuth, joiValidation(updateUserSchema), userController.updateOwnUser.bind(userController));
 
-// Admin routes
-router.get('/all', requireAdmin, UserController.getAllUsers);
-router.get('/:userId', requireAdmin, UserController.getUser);
-router.put('/:userId', requireAdmin, joiValidation(updateUserSchema), UserController.updateUser);
-router.post('/:userId/deactivate', requireAdmin, UserController.deactivateUser);
-router.post('/:userId/reactivate', requireAdmin, UserController.reactivateUser);
+  // Admin routes
+  userRouter.get('/all', requireAdmin, userController.getAllUsers.bind(userController));
+  userRouter.get('/:userId', requireAdmin, userController.getUser.bind(userController));
+  userRouter.put('/:userId', requireAdmin, joiValidation(updateUserSchema), userController.updateUser.bind(userController));
+  userRouter.post('/:userId/deactivate', requireAdmin, userController.deactivateUser.bind(userController));
+  userRouter.post('/:userId/reactivate', requireAdmin, userController.reactivateUser.bind(userController));
+
+  return userRouter;
+};
 
 export default router;

@@ -1,12 +1,15 @@
+// services/db/user-profile.service.ts
+
 import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator';
-import { IUserProfile } from '../../interfaces/user-profile.interface';
+import { IUserProfile } from '../../interfaces/models/user-profile.interface';
 import { UserProfile } from '../../models/user-profile.model';
 import { User } from '../../models/user.model';
 import { NotFoundError } from '../../types/error.types';
+import { IUserProfileService } from '../../interfaces/services/user-profile-service.interface';
 
-export class UserProfileService {
+export class UserProfileService implements IUserProfileService {
   @CacheInvalidate({ keyPrefix: 'user-profile' })
-  static async createProfile(
+  async createProfile(
     userId: string,
     dateOfBirth: Date,
     phoneNumber: string,
@@ -34,7 +37,7 @@ export class UserProfileService {
   }
 
   @Cacheable({ keyPrefix: 'user-profile' })
-  static async getProfile(userId: string): Promise<IUserProfile> {
+  async getProfile(userId: string): Promise<IUserProfile> {
     const profile = await UserProfile.findOne({ user: userId });
     if (!profile) {
       throw new NotFoundError('User profile not found');
@@ -43,7 +46,7 @@ export class UserProfileService {
   }
 
   @CacheInvalidate({ keyPrefix: 'user-profile' })
-  static async updateProfile(userId: string, updateData: Partial<IUserProfile>): Promise<IUserProfile> {
+  async updateProfile(userId: string, updateData: Partial<IUserProfile>): Promise<IUserProfile> {
     const profile = await UserProfile.findOneAndUpdate({ user: userId }, updateData, { new: true, runValidators: true });
     if (!profile) {
       throw new NotFoundError('User profile not found');

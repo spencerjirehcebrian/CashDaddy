@@ -1,14 +1,15 @@
-import { IKYC, VerificationStatus } from '../../interfaces/kyc.interface';
+import { IKYC, VerificationStatus } from '../../interfaces/models/kyc.interface';
 import { KnowYourCustomer } from '../../models/kyc.model';
 import { BadRequestError, NotFoundError } from '../../types/error.types';
 import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator';
 import { UserProfile } from '../../models/user-profile.model';
-import { IUser } from '../../interfaces/user.interface';
+import { IUser } from '../../interfaces/models/user.interface';
 import { User } from '../../models/user.model';
+import { IKYCService } from '../../interfaces/services/kyc-service.interface';
 
-export class KYCService {
+export class KYCService implements IKYCService {
   @CacheInvalidate({ keyPrefix: 'kyc' })
-  static async submitOrUpdateKYC(userId: string, kycData: Omit<IKYC, 'user' | 'verificationStatus'>): Promise<IKYC> {
+  async submitOrUpdateKYC(userId: string, kycData: Omit<IKYC, 'user' | 'verificationStatus'>): Promise<IKYC> {
     // Check if user profile exists
     const userProfile = await UserProfile.findOne({ user: userId });
     if (!userProfile) {
@@ -42,7 +43,7 @@ export class KYCService {
   }
 
   @Cacheable({ keyPrefix: 'kyc' })
-  static async getKYCStatus(userId: string): Promise<IKYC> {
+  async getKYCStatus(userId: string): Promise<IKYC> {
     const kyc = await KnowYourCustomer.findOne({ user: userId });
     if (!kyc) {
       throw new NotFoundError('KYC not found for this user');
@@ -51,7 +52,7 @@ export class KYCService {
   }
 
   @CacheInvalidate({ keyPrefix: 'kyc' })
-  static async approveKYC(kycId: string): Promise<{ kyc: IKYC; user: IUser }> {
+  async approveKYC(kycId: string): Promise<{ kyc: IKYC; user: IUser }> {
     const kyc = await KnowYourCustomer.findById(kycId);
     if (!kyc) {
       throw new NotFoundError('KYC not found');
@@ -77,7 +78,7 @@ export class KYCService {
     return { kyc, user };
   }
   @CacheInvalidate({ keyPrefix: 'kyc' })
-  static async rejectKYC(kycId: string, rejectionReason: string): Promise<IKYC> {
+  async rejectKYC(kycId: string, rejectionReason: string): Promise<IKYC> {
     if (!rejectionReason) {
       throw new BadRequestError('Rejection reason is required');
     }

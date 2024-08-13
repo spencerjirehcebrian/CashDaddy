@@ -1,11 +1,10 @@
 /// <reference path="../types/express.d.ts" />
 import { Request, Response, NextFunction } from 'express';
 import { NotAuthorizedError } from '../types/error.types';
-import { UserRole } from '../interfaces/user.interface';
+import { UserRole } from '../interfaces/models/user.interface';
 import { AuthPayload } from '../types/auth.types';
 import logger from '../utils/logger';
-import jwt from 'jsonwebtoken';
-import { config } from '../config';
+import { AuthService } from '../services/auth/auth.service';
 
 type RoleChecker = (role: string) => boolean;
 
@@ -15,7 +14,7 @@ interface AuthOptions {
   ownershipParamName?: string;
 }
 
-const JWT_SECRET = config.JWT_SECRET;
+const authService = new AuthService();
 
 export const authMiddleware = (options: AuthOptions = {}) => {
   const { roles, checkOwnership = false, ownershipParamName = 'userId' } = options;
@@ -28,11 +27,7 @@ export const authMiddleware = (options: AuthOptions = {}) => {
         throw new NotAuthorizedError('Authentication required');
       }
 
-      const decoded = jwt.verify(token, JWT_SECRET!) as AuthPayload;
-
-      if (!decoded) {
-        throw new NotAuthorizedError('Invalid token');
-      }
+      const decoded = authService.verifyToken(token);
 
       // Check roles if specified
       if (roles) {
@@ -49,11 +44,10 @@ export const authMiddleware = (options: AuthOptions = {}) => {
       // Check ownership if required
       if (checkOwnership && decoded.role !== UserRole.ADMIN) {
         const resourceUserId = getResourceUserId(req, ownershipParamName);
-        logger.info(ownershipParamName + ' ' + req);
         logger.info(`Ownership check: ${decoded.userId} ${resourceUserId}`);
 
         if (decoded.userId !== resourceUserId) {
-          throw new NotAuthorizedError('Not authorized to access this resource ' + resourceUserId + ' ' + decoded.userId);
+          throw new NotAuthorizedError('Not authorized to access this resource');
         }
       }
 

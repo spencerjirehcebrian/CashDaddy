@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import { IUser, UserRole, UserStatus } from '../interfaces/user.interface';
+import { IUser, UserRole, UserStatus } from '../interfaces/models/user.interface';
 import bcryptjs from 'bcryptjs';
 
 interface IUserMethods {

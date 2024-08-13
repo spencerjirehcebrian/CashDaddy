@@ -1,14 +1,15 @@
 import mongoose from 'mongoose';
-import { IUser, UserRole, UserStatus } from '../../interfaces/user.interface';
+import { IUser, UserRole, UserStatus } from '../../interfaces/models/user.interface';
 import { User } from '../../models/user.model';
 import { BadRequestError, NotFoundError } from '../../types/error.types';
 import { AuthPayload } from '../../types/auth.types';
 import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator';
 import logger from '../../utils/logger';
-import { IKYC, VerificationStatus } from '../../interfaces/kyc.interface';
+import { IKYC, VerificationStatus } from '../../interfaces/models/kyc.interface';
+import { IUserService } from '../../interfaces/services/user-service.interface';
 
-export class UserService {
-  static async register(email: string, password: string, firstName: string, lastName: string): Promise<IUser> {
+export class UserService implements IUserService {
+  async register(email: string, password: string, firstName: string, lastName: string): Promise<IUser> {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw new BadRequestError('User already exists');
@@ -26,7 +27,7 @@ export class UserService {
     return user;
   }
 
-  static async login(email: string, password: string): Promise<AuthPayload> {
+  async login(email: string, password: string): Promise<AuthPayload> {
     const user = await User.findOne({ email });
     if (!user || user.status === UserStatus.INACTIVE) {
       throw new BadRequestError('Invalid credentials or inactive account');
@@ -50,7 +51,7 @@ export class UserService {
   }
 
   @Cacheable({ keyPrefix: 'user' })
-  static async getUserById(userId: string): Promise<IUser> {
+  async getUserById(userId: string): Promise<IUser> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundError('Invalid user ID');
     }
@@ -64,7 +65,7 @@ export class UserService {
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })
-  static async updateUser(userId: string, updateData: Partial<IUser>): Promise<IUser> {
+  async updateUser(userId: string, updateData: Partial<IUser>): Promise<IUser> {
     const user = await User.findById(userId);
     if (!user) {
       throw new NotFoundError('User not found');
@@ -77,12 +78,12 @@ export class UserService {
   }
 
   @Cacheable({ keyPrefix: 'all-users' })
-  static async getAllUsers(): Promise<IUser[]> {
+  async getAllUsers(): Promise<IUser[]> {
     return User.find({}).populate('userProfile').populate('kyc').populate('paymentMethods').exec();
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })
-  static async deleteUser(userId: string): Promise<void> {
+  async deleteUser(userId: string): Promise<void> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundError('Invalid user ID');
     }
@@ -94,7 +95,7 @@ export class UserService {
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })
-  static async deactivateUser(userId: string): Promise<IUser> {
+  async deactivateUser(userId: string): Promise<IUser> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundError('Invalid user ID');
     }
@@ -114,7 +115,7 @@ export class UserService {
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })
-  static async reactivateUser(userId: string): Promise<IUser> {
+  async reactivateUser(userId: string): Promise<IUser> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundError('Invalid user ID');
     }

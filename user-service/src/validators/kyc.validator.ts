@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { IdType, AddressProofType } from '../interfaces/kyc.interface';
+import { IdType, AddressProofType } from '../interfaces/models/kyc.interface';
 
 export const kycSchema = Joi.object({
   idType: Joi.string()

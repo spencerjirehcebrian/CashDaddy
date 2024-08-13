@@ -1,5 +1,5 @@
 import Joi, { ValidationResult } from 'joi';
-import { UserRole } from '../interfaces/user.interface';
+import { UserRole } from '../interfaces/models/user.interface';
 
 const validator = {
   validateUserRegistration(user: Record<string, unknown>): ValidationResult {
