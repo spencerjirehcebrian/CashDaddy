@@ -12,7 +12,6 @@ const start = async () => {
     await connectMongoDB();
     await redisClient.connect();
     await connectKafka();
-
     app.listen(parseInt(config.PORT!), () => {
       logger.info(`User microservice listening on port ${config.PORT}`);
     });
