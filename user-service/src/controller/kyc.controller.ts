@@ -34,8 +34,8 @@ export class KYCController {
 
   async approveKYC(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const kycId = req.params.kycId;
-      const { kyc, user } = await this.kycService.approveKYC(kycId);
+      const userId = req.params.userId;
+      const { kyc, user } = await this.kycService.approveKYC(userId);
 
       // Send Kafka message
       await produceMessage('kyc-approved', { kyc, user });
@@ -54,9 +54,9 @@ export class KYCController {
 
   async rejectKYC(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const kycId = req.params.kycId;
+      const userId = req.params.userId;
       const { rejectionReason } = req.body;
-      const updatedKYC = await this.kycService.rejectKYC(kycId, rejectionReason);
+      const updatedKYC = await this.kycService.rejectKYC(userId, rejectionReason);
       sendResponse(res, 200, true, 'KYC rejected successfully', updatedKYC);
     } catch (error) {
       next(error);

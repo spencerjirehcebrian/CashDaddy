@@ -11,7 +11,11 @@ interface MongooseError extends Error {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorHandler = (err: Error | CustomError | MongooseError, _req: Request, res: Response, _next: NextFunction): Response | void => {
-  logger.error(err.stack);
+  if (err.stack) {
+    logger.error(err.stack);
+  } else {
+    logger.error('Error stack is undefined');
+  }
 
   if (err instanceof CustomError) {
     const serializedError = err.serializeErrors();

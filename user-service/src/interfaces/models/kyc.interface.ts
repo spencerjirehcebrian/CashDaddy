@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import { IUser } from './user.interface';
 
 export enum VerificationStatus {
@@ -20,7 +21,7 @@ export enum AddressProofType {
 }
 
 export interface IKYC extends Document {
-  user: string | IUser;
+  user: Types.ObjectId | IUser;
   idType: IdType;
   idNumber: string;
   idExpiryDate: Date;

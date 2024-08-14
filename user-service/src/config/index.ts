@@ -24,7 +24,7 @@ class Config {
   }
 
   public validateConfig(): void {
-    console.log(this);
+    // console.log(this);
     for (const [key, value] of Object.entries(this)) {
       if (value === undefined) {
         throw new Error(`Configuration ${key} is undefined.`);

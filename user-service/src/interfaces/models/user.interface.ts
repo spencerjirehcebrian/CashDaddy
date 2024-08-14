@@ -1,10 +1,11 @@
-import { Schema } from 'mongoose';
 import { IUserProfile } from './user-profile.interface';
 import { IKYC } from './kyc.interface';
+import { Types } from 'mongoose';
 
 export enum UserRole {
   USER = 'USER',
-  ADMIN = 'ADMIN'
+  ADMIN = 'ADMIN',
+  SUPER_ADMIN = 'SUPER_ADMIN'
 }
 
 export enum UserStatus {
@@ -19,8 +20,8 @@ export interface IUser extends Document {
   lastName: string;
   role: UserRole;
   status: UserStatus;
-  userProfile?: Schema.Types.ObjectId | IUserProfile;
-  kyc?: Schema.Types.ObjectId | IKYC;
+  userProfile?: Types.ObjectId | IUserProfile;
+  kyc?: Types.ObjectId | IKYC;
   isValidPassword(password: string): Promise<boolean>;
 }
 export interface UserDocument extends IUser, Document {}

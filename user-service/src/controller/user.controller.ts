@@ -119,4 +119,18 @@ export class UserController {
       }
     }
   }
+
+  async promoteUserToAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.params.userId;
+      const promotedUser = await this.userService.promoteUserToAdmin(userId);
+      sendResponse(res, 200, true, 'User promoted successfully', { user: promotedUser });
+    } catch (error) {
+      if (error instanceof NotFoundError || error instanceof BadRequestError) {
+        sendResponse(res, 400, false, error.message);
+      } else {
+        next(error);
+      }
+    }
+  }
 }

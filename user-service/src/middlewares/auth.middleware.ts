@@ -4,7 +4,6 @@ import { Request, Response, NextFunction } from 'express';
 import { NotAuthorizedError } from '../types/error.types';
 import { UserRole } from '../interfaces/models/user.interface';
 import { AuthPayload } from '../types/auth.types';
-import logger from '../utils/logger';
 import { AuthService } from '../services/auth/auth.service';
 
 type RoleChecker = (role: string) => boolean;
@@ -32,7 +31,9 @@ export const authMiddleware = (options: AuthOptions = {}) => {
 
       // Check roles if specified
       if (roles) {
-        const hasRequiredRole = Array.isArray(roles) ? roles.includes(decoded.role as UserRole) : roles(decoded.role);
+        const hasRequiredRole = Array.isArray(roles)
+          ? roles.includes(decoded.role as UserRole) || decoded.role === UserRole.SUPER_ADMIN
+          : roles(decoded.role) || decoded.role === UserRole.SUPER_ADMIN;
 
         if (!hasRequiredRole) {
           throw new NotAuthorizedError('Insufficient privileges');
@@ -43,9 +44,8 @@ export const authMiddleware = (options: AuthOptions = {}) => {
       req.user = decoded;
 
       // Check ownership if required
-      if (checkOwnership && decoded.role !== UserRole.ADMIN) {
+      if (checkOwnership && decoded.role !== UserRole.ADMIN && decoded.role !== UserRole.SUPER_ADMIN) {
         const resourceUserId = getResourceUserId(req, ownershipParamName);
-        logger.info(`Ownership check: ${decoded.userId} ${resourceUserId}`);
 
         if (decoded.userId !== resourceUserId) {
           throw new NotAuthorizedError('Not authorized to access this resource');
@@ -63,7 +63,7 @@ function getResourceUserId(req: Request, paramName: string): string {
   return req.params[paramName] || (req.user as AuthPayload).userId;
 }
 
-// Helper functions for common auth scenarios
 export const requireAuth = authMiddleware();
-export const requireAdmin = authMiddleware({ roles: [UserRole.ADMIN] });
+export const requireAdmin = authMiddleware({ roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] });
+export const requireSuperAdmin = authMiddleware({ roles: [UserRole.SUPER_ADMIN] });
 export const requireOwnership = authMiddleware({ checkOwnership: true });

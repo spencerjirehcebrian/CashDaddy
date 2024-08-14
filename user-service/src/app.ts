@@ -15,6 +15,8 @@ import { UserProfileController } from './controller/user-profile.controller';
 import { KYCService } from './services/db/kyc.service';
 import { KYCController } from './controller/kyc.controller';
 
+
+
 const app = express();
 app.use(json());
 app.use(express.urlencoded({ extended: true }));

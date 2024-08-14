@@ -4,11 +4,12 @@ import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator';
 import { IUserProfile } from '../../interfaces/models/user-profile.interface';
 import { UserProfile } from '../../models/user-profile.model';
 import { User } from '../../models/user.model';
-import { NotFoundError } from '../../types/error.types';
+import { BadRequestError, NotFoundError } from '../../types/error.types';
 import { IUserProfileService } from '../../interfaces/services/user-profile-service.interface';
 
 export class UserProfileService implements IUserProfileService {
   @CacheInvalidate({ keyPrefix: 'user-profile' })
+  @CacheInvalidate({ keyPrefix: 'user' })
   async createProfile(
     userId: string,
     dateOfBirth: Date,
@@ -20,6 +21,12 @@ export class UserProfileService implements IUserProfileService {
     country: string,
     postalCode: string
   ): Promise<IUserProfile> {
+    // Check if a profile already exists for the user
+    const existingProfile = await UserProfile.findOne({ user: userId });
+    if (existingProfile) {
+      throw new BadRequestError('User profile already exists');
+    }
+
     const profile = new UserProfile({
       user: userId,
       dateOfBirth,
@@ -46,6 +53,7 @@ export class UserProfileService implements IUserProfileService {
   }
 
   @CacheInvalidate({ keyPrefix: 'user-profile' })
+  @CacheInvalidate({ keyPrefix: 'user' })
   async updateProfile(userId: string, updateData: Partial<IUserProfile>): Promise<IUserProfile> {
     const profile = await UserProfile.findOneAndUpdate({ user: userId }, updateData, { new: true, runValidators: true });
     if (!profile) {

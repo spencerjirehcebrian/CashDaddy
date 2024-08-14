@@ -9,8 +9,8 @@ import { IKYCService } from '../../interfaces/services/kyc-service.interface';
 
 export class KYCService implements IKYCService {
   @CacheInvalidate({ keyPrefix: 'kyc' })
+  @CacheInvalidate({ keyPrefix: 'user' })
   async submitOrUpdateKYC(userId: string, kycData: Omit<IKYC, 'user' | 'verificationStatus'>): Promise<IKYC> {
-    // Check if user profile exists
     const userProfile = await UserProfile.findOne({ user: userId });
     if (!userProfile) {
       throw new BadRequestError('User profile not found. Please complete your profile before submitting KYC.');
@@ -52,8 +52,9 @@ export class KYCService implements IKYCService {
   }
 
   @CacheInvalidate({ keyPrefix: 'kyc' })
-  async approveKYC(kycId: string): Promise<{ kyc: IKYC; user: IUser }> {
-    const kyc = await KnowYourCustomer.findById(kycId);
+  @CacheInvalidate({ keyPrefix: 'user' })
+  async approveKYC(userId: string): Promise<{ kyc: IKYC; user: IUser }> {
+    const kyc = await KnowYourCustomer.findOne({ user: userId });
     if (!kyc) {
       throw new NotFoundError('KYC not found');
     }
@@ -73,18 +74,21 @@ export class KYCService implements IKYCService {
     }
 
     kyc.verificationStatus = VerificationStatus.APPROVED;
+    kyc.rejectionReason = undefined;
     await kyc.save();
 
     return { kyc, user };
   }
+
   @CacheInvalidate({ keyPrefix: 'kyc' })
-  async rejectKYC(kycId: string, rejectionReason: string): Promise<IKYC> {
+  @CacheInvalidate({ keyPrefix: 'user' })
+  async rejectKYC(userId: string, rejectionReason: string): Promise<IKYC> {
     if (!rejectionReason) {
       throw new BadRequestError('Rejection reason is required');
     }
 
-    const kyc = await KnowYourCustomer.findByIdAndUpdate(
-      kycId,
+    const kyc = await KnowYourCustomer.findOneAndUpdate(
+      { user: userId },
       {
         verificationStatus: VerificationStatus.REJECTED,
         rejectionReason

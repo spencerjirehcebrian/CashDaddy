@@ -5,6 +5,8 @@ import logger from './utils/logger';
 import { connectMongoDB } from './utils/mongo-client';
 import { redisClient } from './utils/redis-client';
 
+process.env.KAFKAJS_NO_PARTITIONER_WARNING = '1';
+
 config.validateConfig();
 
 const start = async () => {

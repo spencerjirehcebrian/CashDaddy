@@ -1,8 +1,8 @@
 import express from 'express';
-import { joiValidation } from '../middlewares/validation.middleware';
 import { createProfileSchema, updateProfileSchema } from '../validators/user-profile.validators';
 import { requireAuth, requireAdmin, requireOwnership } from '../middlewares/auth.middleware';
 import { UserProfileController } from '../controller/user-profile.controller';
+import { zodValidation } from '../middlewares/validation.middleware';
 
 const router = (userProfileController: UserProfileController) => {
   const profileRouter = express.Router();
@@ -11,7 +11,7 @@ const router = (userProfileController: UserProfileController) => {
   profileRouter.post(
     '/',
     requireOwnership,
-    joiValidation(createProfileSchema),
+    zodValidation(createProfileSchema),
     userProfileController.createProfile.bind(userProfileController)
   );
 
@@ -20,7 +20,7 @@ const router = (userProfileController: UserProfileController) => {
   profileRouter.put(
     '/me',
     requireAuth,
-    joiValidation(updateProfileSchema),
+    zodValidation(updateProfileSchema),
     userProfileController.updateOwnProfile.bind(userProfileController)
   );
 
@@ -30,7 +30,7 @@ const router = (userProfileController: UserProfileController) => {
   profileRouter.put(
     '/:userId',
     requireAdmin,
-    joiValidation(updateProfileSchema),
+    zodValidation(updateProfileSchema),
     userProfileController.updateProfile.bind(userProfileController)
   );
 

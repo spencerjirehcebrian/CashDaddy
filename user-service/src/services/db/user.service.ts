@@ -15,12 +15,14 @@ export class UserService implements IUserService {
       throw new BadRequestError('User already exists');
     }
 
+    const isFirstUser = !(await User.findOne().select('_id').lean().exec());
+
     const user = new User({
       email,
       password,
       firstName,
       lastName,
-      role: UserRole.USER
+      role: isFirstUser ? UserRole.ADMIN : UserRole.USER
     });
 
     await user.save();
@@ -38,10 +40,25 @@ export class UserService implements IUserService {
       throw new BadRequestError('Invalid credentials');
     }
 
+    let effectiveRole = user.role as UserRole;
+    if (user.role === UserRole.ADMIN) {
+      const isFirstAdmin = !(await User.findOne({
+        role: UserRole.ADMIN,
+        _id: { $lt: user._id }
+      })
+        .select('_id')
+        .lean()
+        .exec());
+
+      if (isFirstAdmin) {
+        effectiveRole = UserRole.SUPER_ADMIN;
+      }
+    }
+
     const authPayload: AuthPayload = {
       userId: user._id.toString(),
       email: user.email,
-      role: user.role as UserRole,
+      role: effectiveRole,
       status: (user.status as UserStatus) || undefined,
       verificationStatus: ((user.kyc as IKYC)?.verificationStatus as VerificationStatus) || VerificationStatus.NOT_SUBMITTED
     };
@@ -56,7 +73,7 @@ export class UserService implements IUserService {
       throw new NotFoundError('Invalid user ID');
     }
 
-    const user = await User.findById(userId).populate('userProfile').populate('kyc').populate('paymentMethods').exec();
+    const user = await User.findById(userId).populate('userProfile').populate('kyc').exec();
     if (!user) {
       throw new NotFoundError('User not found');
     }
@@ -79,7 +96,7 @@ export class UserService implements IUserService {
 
   @Cacheable({ keyPrefix: 'all-users' })
   async getAllUsers(): Promise<IUser[]> {
-    return User.find({}).populate('userProfile').populate('kyc').populate('paymentMethods').exec();
+    return User.find({}).populate('userProfile').populate('kyc').exec();
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })
@@ -130,6 +147,27 @@ export class UserService implements IUserService {
     }
 
     user.status = UserStatus.ACTIVE;
+    await user.save();
+
+    return user;
+  }
+
+  @CacheInvalidate({ keyPrefix: 'user' })
+  async promoteUserToAdmin(userId: string): Promise<IUser> {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      throw new NotFoundError('Invalid user ID');
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+
+    if (user.role === UserRole.ADMIN) {
+      throw new BadRequestError('User is already admin');
+    }
+
+    user.role = UserRole.ADMIN;
     await user.save();
 
     return user;

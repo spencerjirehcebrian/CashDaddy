@@ -1,30 +1,34 @@
 {
   "compilerOptions": {
-    "target": "ES2020", // Specify ECMAScript target version
-    "module": "commonjs", // Specify module code generation
-    "rootDir": "./src", // Specify the root directory of input files
-    "outDir": "./dist", // Redirect output structure to the directory
-    "strict": true, // Enable all strict type-checking options
-    "moduleResolution": "node", // Specify module resolution strategy
-    "esModuleInterop": true, // Enable esModuleInterop for compatibility
-    "skipLibCheck": true, // Skip type checking of declaration files
-    "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file
-    "noImplicitAny": true, // Raise error on expressions and declarations with an implied `any` type
-    "noImplicitThis": true, // Raise error on `this` expressions with an implied `any` type
-    "strictNullChecks": true, // Enable strict null checks
-    "strictFunctionTypes": true, // Enable strict checking of function types
-    "strictBindCallApply": true, // Enable strict `bind`, `call`, and `apply` methods on functions
-    "strictPropertyInitialization": true, // Enable strict checking of property initialization in classes
-    "noUnusedLocals": true, // Report errors on unused locals
-    "noUnusedParameters": true, // Report errors on unused parameters
-    "noImplicitReturns": true, // Report error when not all code paths in function return a value
-    "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statements
-    "resolveJsonModule": true, // Include modules imported with `.json` extension
-    "isolatedModules": true, // Ensure each file can be safely transpiled without relying on other imports
-    "typeRoots": ["src/node_modules/@types"], // Specify array of paths to lookup global type definitions
-    "lib": ["ES2020", "DOM"], // Specify library files to be included in the compilation
-    "experimentalDecorators": true
+    "target": "ES2020",
+    "module": "NodeNext",
+    "rootDir": ".",
+    "outDir": "./dist",
+    "strict": true,
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "lib": ["ES2020", "DOM"],
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   },
-  "include": ["src/**/*"], // Include the specified files in the compilation
-  "exclude": ["src/node_modules", "dist"] // Exclude the specified files from the compilation
+  "include": ["src/**/*", "tests/**/*", "jest.config.ts"],
+  "exclude": ["node_modules", "dist"]
 }

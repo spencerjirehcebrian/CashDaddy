@@ -10,4 +10,5 @@ export interface IUserService {
   deleteUser(userId: string): Promise<void>;
   deactivateUser(userId: string): Promise<IUser>;
   reactivateUser(userId: string): Promise<IUser>;
+  promoteUserToAdmin(userId: string): Promise<IUser>;
 }

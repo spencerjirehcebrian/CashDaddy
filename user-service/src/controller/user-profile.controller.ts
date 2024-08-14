@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { IUserProfileService } from '../interfaces/services/user-profile-service.interface';
 import { sendResponse } from '../utils/response';
-import { NotFoundError } from '../types/error.types';
+import { BadRequestError, NotFoundError } from '../types/error.types';
 import { AuthPayload } from '../types/auth.types';
 
 export class UserProfileController {
@@ -24,7 +24,11 @@ export class UserProfileController {
       );
       sendResponse(res, 201, true, 'User profile created successfully', { profile });
     } catch (error) {
-      next(error);
+      if (error instanceof BadRequestError) {
+        sendResponse(res, 400, false, error.message);
+      } else {
+        next(error);
+      }
     }
   }
 

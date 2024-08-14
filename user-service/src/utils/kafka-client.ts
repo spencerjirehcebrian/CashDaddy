@@ -1,8 +1,8 @@
 import { Kafka, Producer } from 'kafkajs';
 import { config } from '../config';
+import logger from './logger';
 
 let producer: Producer;
-
 export const connectKafka = async () => {
   try {
     const kafka = new Kafka({
@@ -12,11 +12,11 @@ export const connectKafka = async () => {
 
     producer = kafka.producer();
     await producer.connect();
-    console.log('Connected to Kafka:', config.KAFKA_BROKERS);
+    logger.info('Connected to Kafka:', config.KAFKA_BROKERS);
 
     return producer;
   } catch (error) {
-    console.error('Failed to connect to Kafka:', error);
+    logger.error('Failed to connect to Kafka:', error);
     throw error;
   }
 };
