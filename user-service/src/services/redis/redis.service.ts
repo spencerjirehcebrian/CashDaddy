@@ -1,6 +1,7 @@
+import { ICacheService } from '../../interfaces/services/cache-service.interface';
 import { redisClient } from '../../utils/redis-client';
 
-class RedisService {
+export class RedisService implements ICacheService {
   async set(key: string, value: string, expiration?: number): Promise<void> {
     await redisClient.set(key, value);
     if (expiration) {
@@ -44,5 +45,3 @@ class RedisService {
     return await redisClient.keys(pattern);
   }
 }
-
-export const redisService = new RedisService();

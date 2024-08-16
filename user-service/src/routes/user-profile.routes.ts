@@ -1,21 +1,40 @@
 import express from 'express';
-import { joiValidation } from '../middlewares/validation.middleware';
 import { createProfileSchema, updateProfileSchema } from '../validators/user-profile.validators';
 import { requireAuth, requireAdmin, requireOwnership } from '../middlewares/auth.middleware';
 import { UserProfileController } from '../controller/user-profile.controller';
+import { zodValidation } from '../middlewares/validation.middleware';
 
-const router = express.Router();
+const router = (userProfileController: UserProfileController) => {
+  const profileRouter = express.Router();
 
-// Routes for user's own profile
-router.post('/', requireOwnership, joiValidation(createProfileSchema), UserProfileController.createProfile);
+  // Routes for user's own profile
+  profileRouter.post(
+    '/',
+    requireOwnership,
+    zodValidation(createProfileSchema),
+    userProfileController.createProfile.bind(userProfileController)
+  );
 
-router.get('/me', requireAuth, UserProfileController.getOwnProfile);
+  profileRouter.get('/me', requireAuth, userProfileController.getOwnProfile.bind(userProfileController));
 
-router.put('/me', requireAuth, joiValidation(updateProfileSchema), UserProfileController.updateOwnProfile);
+  profileRouter.put(
+    '/me',
+    requireAuth,
+    zodValidation(updateProfileSchema),
+    userProfileController.updateOwnProfile.bind(userProfileController)
+  );
 
-// Admin routes
-router.get('/:userId', requireAdmin, UserProfileController.getProfile);
+  // Admin routes
+  profileRouter.get('/:userId', requireAdmin, userProfileController.getProfile.bind(userProfileController));
 
-router.put('/:userId', requireAdmin, joiValidation(updateProfileSchema), UserProfileController.updateProfile);
+  profileRouter.put(
+    '/:userId',
+    requireAdmin,
+    zodValidation(updateProfileSchema),
+    userProfileController.updateProfile.bind(userProfileController)
+  );
+
+  return profileRouter;
+};
 
 export default router;

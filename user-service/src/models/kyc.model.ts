@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import { IKYC, VerificationStatus, IdType, AddressProofType } from '../interfaces/kyc.interface';
+import { IKYC, VerificationStatus, IdType, AddressProofType } from '../interfaces/models/kyc.interface';
 
 const kycSchema = new Schema<IKYC>(
   {

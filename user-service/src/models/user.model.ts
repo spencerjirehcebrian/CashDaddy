@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import { IUser, UserRole, UserStatus } from '../interfaces/user.interface';
+import { IUser, UserRole, UserStatus } from '../interfaces/models/user.interface';
 import bcryptjs from 'bcryptjs';
 
 interface IUserMethods {
@@ -17,20 +17,21 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     role: { type: String, enum: Object.values(UserRole), default: UserRole.USER },
     status: { type: String, enum: Object.values(UserStatus), default: UserStatus.ACTIVE },
     userProfile: { type: Schema.Types.ObjectId, ref: 'UserProfile' },
-    kyc: { type: Schema.Types.ObjectId, ref: 'KnowYourCustomer' },
-    paymentMethods: [{ type: Schema.Types.ObjectId, ref: 'PaymentMethod' }]
+    kyc: { type: Schema.Types.ObjectId, ref: 'KnowYourCustomer' }
   },
   {
     timestamps: true,
     toJSON: {
       transform: function (_doc, ret) {
         delete ret.__v;
+        delete ret.password;
         return ret;
       }
     },
     toObject: {
       transform: function (_doc, ret) {
         delete ret.__v;
+        delete ret.password;
         return ret;
       }
     }
