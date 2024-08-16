@@ -10,7 +10,7 @@ const logger = winston_1.default.createLogger({
     format: winston_1.default.format.combine(winston_1.default.format.timestamp({
         format: 'YYYY-MM-DD HH:mm:ss'
     }), winston_1.default.format.errors({ stack: true }), winston_1.default.format.splat(), winston_1.default.format.json()),
-    defaultMeta: { service: 'e-wallet-api' },
+    defaultMeta: { service: 'cashdaddy-api' },
     transports: [
         new winston_1.default.transports.File({ filename: 'error.log', level: 'error' }),
         new winston_1.default.transports.File({ filename: 'combined.log' })

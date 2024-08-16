@@ -1,48 +1,16 @@
-import express from 'express';
-import { json } from 'body-parser';
-import { userRouter } from './routes/user.routes';
-import mongoose from 'mongoose';
-import { createClient } from 'redis';
-import { Kafka } from 'kafkajs';
+import app from './app';
 import { config } from './config';
-import errorHandler from './middleware/error.middleware';
-import cors from 'cors';
-
-const app = express();
-app.use(json());
-app.use(errorHandler);
-app.use('/api/users', userRouter);
-
-const corsOptions = {
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-};
-
-app.use(cors(corsOptions));
+import { connectKafka, disconnectKafka } from './utils/kafka-client';
+import { connectMongoDB } from './utils/mongo-client';
+import { redisClient } from './utils/redis-client';
 
 config.validateConfig();
 
-const redisClient = createClient({
-  url: config.REDIS_URL
-});
-
-const kafka = new Kafka({
-  clientId: 'cashdaddy',
-  brokers: config.KAFKA_BROKERS ? config.KAFKA_BROKERS.split(',') : []
-});
-const producer = kafka.producer();
-
 const start = async () => {
   try {
-    await mongoose.connect(config.MONGO_URI!);
-    console.log('Connected to MongoDB:', config.MONGO_URI);
-
+    await connectMongoDB();
     await redisClient.connect();
-    console.log('Connected to Redis:', config.REDIS_URL);
-
-    await producer.connect();
-    console.log('Connected to Kafka:', config.KAFKA_BROKERS);
+    await connectKafka();
 
     app.listen(parseInt(config.PORT!), () => {
       console.log(`User microservice listening on port ${config.PORT}`);
@@ -53,3 +21,11 @@ const start = async () => {
 };
 
 start();
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  console.log('SIGTERM signal received. Closing HTTP server.');
+  await disconnectKafka();
+  // Close other connections...
+  process.exit(0);
+});
