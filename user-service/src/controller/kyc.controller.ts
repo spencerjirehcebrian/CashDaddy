@@ -1,15 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
-import { KYCService } from '../services/db/kyc.service';
+import { IKYCService } from '../interfaces/services/kyc-service.interface';
 import { sendResponse } from '../utils/response';
 import { BadRequestError, NotFoundError } from '../types/error.types';
 import { produceMessage } from '../utils/kafka-client';
 
 export class KYCController {
-  static async submitOrUpdateKYC(req: Request, res: Response, next: NextFunction): Promise<void> {
+  constructor(private kycService: IKYCService) {}
+
+  async submitOrUpdateKYC(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.userId;
       const kycData = req.body;
-      const kyc = await KYCService.submitOrUpdateKYC(userId, kycData);
+      const kyc = await this.kycService.submitOrUpdateKYC(userId, kycData);
       sendResponse(res, 200, true, 'KYC submitted or updated successfully', kyc);
     } catch (error) {
       if (error instanceof BadRequestError) {
@@ -20,20 +22,20 @@ export class KYCController {
     }
   }
 
-  static async getKYCStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getKYCStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.params.userId;
-      const kyc = await KYCService.getKYCStatus(userId);
+      const kyc = await this.kycService.getKYCStatus(userId);
       sendResponse(res, 200, true, 'KYC status retrieved successfully', kyc);
     } catch (error) {
       next(error);
     }
   }
 
-  static async approveKYC(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async approveKYC(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const kycId = req.params.kycId;
-      const { kyc, user } = await KYCService.approveKYC(kycId);
+      const userId = req.params.userId;
+      const { kyc, user } = await this.kycService.approveKYC(userId);
 
       // Send Kafka message
       await produceMessage('kyc-approved', { kyc, user });
@@ -50,21 +52,21 @@ export class KYCController {
     }
   }
 
-  static async rejectKYC(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async rejectKYC(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const kycId = req.params.kycId;
+      const userId = req.params.userId;
       const { rejectionReason } = req.body;
-      const updatedKYC = await KYCService.rejectKYC(kycId, rejectionReason);
+      const updatedKYC = await this.kycService.rejectKYC(userId, rejectionReason);
       sendResponse(res, 200, true, 'KYC rejected successfully', updatedKYC);
     } catch (error) {
       next(error);
     }
   }
 
-  static async getOwnKYCStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getOwnKYCStatus(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.user!.userId;
-      const kyc = await KYCService.getKYCStatus(userId);
+      const kyc = await this.kycService.getKYCStatus(userId);
       sendResponse(res, 200, true, 'KYC status retrieved successfully', kyc);
     } catch (error) {
       next(error);

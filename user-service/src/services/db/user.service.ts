@@ -1,32 +1,35 @@
 import mongoose from 'mongoose';
-import { IUser, UserRole, UserStatus } from '../../interfaces/user.interface';
+import { IUser, UserRole, UserStatus } from '../../interfaces/models/user.interface';
 import { User } from '../../models/user.model';
 import { BadRequestError, NotFoundError } from '../../types/error.types';
 import { AuthPayload } from '../../types/auth.types';
 import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator';
 import logger from '../../utils/logger';
-import { IKYC, VerificationStatus } from '../../interfaces/kyc.interface';
+import { IKYC, VerificationStatus } from '../../interfaces/models/kyc.interface';
+import { IUserService } from '../../interfaces/services/user-service.interface';
 
-export class UserService {
-  static async register(email: string, password: string, firstName: string, lastName: string): Promise<IUser> {
+export class UserService implements IUserService {
+  async register(email: string, password: string, firstName: string, lastName: string): Promise<IUser> {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       throw new BadRequestError('User already exists');
     }
+
+    const isFirstUser = !(await User.findOne().select('_id').lean().exec());
 
     const user = new User({
       email,
       password,
       firstName,
       lastName,
-      role: UserRole.USER
+      role: isFirstUser ? UserRole.ADMIN : UserRole.USER
     });
 
     await user.save();
     return user;
   }
 
-  static async login(email: string, password: string): Promise<AuthPayload> {
+  async login(email: string, password: string): Promise<AuthPayload> {
     const user = await User.findOne({ email });
     if (!user || user.status === UserStatus.INACTIVE) {
       throw new BadRequestError('Invalid credentials or inactive account');
@@ -37,12 +40,27 @@ export class UserService {
       throw new BadRequestError('Invalid credentials');
     }
 
+    let effectiveRole = user.role as UserRole;
+    if (user.role === UserRole.ADMIN) {
+      const isFirstAdmin = !(await User.findOne({
+        role: UserRole.ADMIN,
+        _id: { $lt: user._id }
+      })
+        .select('_id')
+        .lean()
+        .exec());
+
+      if (isFirstAdmin) {
+        effectiveRole = UserRole.SUPER_ADMIN;
+      }
+    }
+
     const authPayload: AuthPayload = {
       userId: user._id.toString(),
       email: user.email,
-      role: user.role as UserRole,
+      role: effectiveRole,
       status: (user.status as UserStatus) || undefined,
-      verificationStatus: ((user.kyc as IKYC)?.verificationStatus.toString() as VerificationStatus) || VerificationStatus.NOT_SUBMITTED
+      verificationStatus: ((user.kyc as IKYC)?.verificationStatus as VerificationStatus) || VerificationStatus.NOT_SUBMITTED
     };
     logger.info('User logged in', authPayload);
 
@@ -50,12 +68,12 @@ export class UserService {
   }
 
   @Cacheable({ keyPrefix: 'user' })
-  static async getUserById(userId: string): Promise<IUser> {
+  async getUserById(userId: string): Promise<IUser> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundError('Invalid user ID');
     }
 
-    const user = await User.findById(userId).populate('userProfile').populate('kyc').populate('paymentMethods').exec();
+    const user = await User.findById(userId).populate('userProfile').populate('kyc').exec();
     if (!user) {
       throw new NotFoundError('User not found');
     }
@@ -64,7 +82,7 @@ export class UserService {
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })
-  static async updateUser(userId: string, updateData: Partial<IUser>): Promise<IUser> {
+  async updateUser(userId: string, updateData: Partial<IUser>): Promise<IUser> {
     const user = await User.findById(userId);
     if (!user) {
       throw new NotFoundError('User not found');
@@ -77,12 +95,12 @@ export class UserService {
   }
 
   @Cacheable({ keyPrefix: 'all-users' })
-  static async getAllUsers(): Promise<IUser[]> {
-    return User.find({}).populate('userProfile').populate('kyc').populate('paymentMethods').exec();
+  async getAllUsers(): Promise<IUser[]> {
+    return User.find({}).populate('userProfile').populate('kyc').exec();
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })
-  static async deleteUser(userId: string): Promise<void> {
+  async deleteUser(userId: string): Promise<void> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundError('Invalid user ID');
     }
@@ -94,7 +112,7 @@ export class UserService {
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })
-  static async deactivateUser(userId: string): Promise<IUser> {
+  async deactivateUser(userId: string): Promise<IUser> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundError('Invalid user ID');
     }
@@ -108,14 +126,13 @@ export class UserService {
       throw new BadRequestError('User is already inactive');
     }
 
-    user.status = UserStatus.INACTIVE;
     await user.save();
 
     return user;
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })
-  static async reactivateUser(userId: string): Promise<IUser> {
+  async reactivateUser(userId: string): Promise<IUser> {
     if (!mongoose.Types.ObjectId.isValid(userId)) {
       throw new NotFoundError('Invalid user ID');
     }
@@ -130,6 +147,27 @@ export class UserService {
     }
 
     user.status = UserStatus.ACTIVE;
+    await user.save();
+
+    return user;
+  }
+
+  @CacheInvalidate({ keyPrefix: 'user' })
+  async promoteUserToAdmin(userId: string): Promise<IUser> {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      throw new NotFoundError('Invalid user ID');
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+
+    if (user.role === UserRole.ADMIN) {
+      throw new BadRequestError('User is already admin');
+    }
+
+    user.role = UserRole.ADMIN;
     await user.save();
 
     return user;

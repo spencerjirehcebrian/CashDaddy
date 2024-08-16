@@ -12,6 +12,6 @@ RUN npm install -g typescript
 
 RUN tsc
 
-EXPOSE 3000
+EXPOSE 3001
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/server.js"]

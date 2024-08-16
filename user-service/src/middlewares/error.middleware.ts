@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { BadRequestError, NotAuthorizedError, ServerError, CustomError } from '../types/error.types';
+import { BadRequestError, NotAuthorizedError, ServerError, CustomError, InvalidObjectIdError } from '../types/error.types';
 import logger from '../utils/logger';
 import { sendResponse } from '../utils/response';
 
@@ -11,7 +11,11 @@ interface MongooseError extends Error {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorHandler = (err: Error | CustomError | MongooseError, _req: Request, res: Response, _next: NextFunction): Response | void => {
-  logger.error(err.stack);
+  if (err.stack) {
+    logger.error(err.stack);
+  } else {
+    logger.error('Error stack is undefined');
+  }
 
   if (err instanceof CustomError) {
     const serializedError = err.serializeErrors();
@@ -39,6 +43,12 @@ const errorHandler = (err: Error | CustomError | MongooseError, _req: Request, r
     const customError = new NotAuthorizedError('Invalid token');
     const serializedError = customError.serializeErrors();
     return sendResponse(res, serializedError.statusCode, false, 'Authentication error', serializedError);
+  }
+
+  if (err.name === 'CastError' && 'kind' in err && err.kind === 'ObjectId') {
+    const customError = new InvalidObjectIdError(`Invalid ObjectId format: A param is not a valid`);
+    const serializedError = customError.serializeErrors();
+    return sendResponse(res, serializedError.statusCode, false, 'Invalid ObjectId', serializedError);
   }
 
   // Default to 500 server error

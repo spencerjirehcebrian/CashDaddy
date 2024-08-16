@@ -1,18 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
-import { UserProfileService } from '../services/db/user-profile.service';
+import { IUserProfileService } from '../interfaces/services/user-profile-service.interface';
 import { sendResponse } from '../utils/response';
+import { BadRequestError, NotFoundError } from '../types/error.types';
 import { AuthPayload } from '../types/auth.types';
-import { NotFoundError } from '../types/error.types';
 
 export class UserProfileController {
-  static async createProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const user = req.user as AuthPayload;
-      const { dateOfBirth, phoneNumber, addressLine1, addressLine2, city, state, country, postalCode } = req.body;
+  constructor(private userProfileService: IUserProfileService) {}
 
-      const profile = await UserProfileService.createProfile(
-        user.userId,
-        new Date(dateOfBirth),
+  async createProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = (req.user as AuthPayload).userId;
+      const { dateOfBirth, phoneNumber, addressLine1, addressLine2, city, state, country, postalCode } = req.body;
+      const profile = await this.userProfileService.createProfile(
+        userId,
+        dateOfBirth,
         phoneNumber,
         addressLine1,
         addressLine2,
@@ -21,54 +22,57 @@ export class UserProfileController {
         country,
         postalCode
       );
-      sendResponse(res, 201, true, 'User profile created successfully', profile);
+      sendResponse(res, 201, true, 'User profile created successfully', { profile });
     } catch (error) {
-      next(error);
-    }
-  }
-
-  static async getOwnProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
-    try {
-      const user = req.user as AuthPayload;
-      const profile = await UserProfileService.getProfile(user.userId);
-
-      if (!profile) {
-        throw new NotFoundError('Profile not found');
+      if (error instanceof BadRequestError) {
+        sendResponse(res, 400, false, error.message);
+      } else {
+        next(error);
       }
-
-      sendResponse(res, 200, true, 'User profile retrieved successfully', profile);
-    } catch (error) {
-      next(error);
     }
   }
 
-  static async updateOwnProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getOwnProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const user = req.user as AuthPayload;
-      const updateData = req.body;
-      const updatedProfile = await UserProfileService.updateProfile(user.userId, updateData);
-      sendResponse(res, 200, true, 'User profile updated successfully', updatedProfile);
+      const userId = (req.user as AuthPayload).userId;
+      const profile = await this.userProfileService.getProfile(userId);
+      sendResponse(res, 200, true, 'User profile retrieved successfully', { profile });
     } catch (error) {
       next(error);
     }
   }
 
-  static async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async updateOwnProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = (req.user as AuthPayload).userId;
+      const updateData = req.body;
+      const updatedProfile = await this.userProfileService.updateProfile(userId, updateData);
+      sendResponse(res, 200, true, 'User profile updated successfully', { profile: updatedProfile });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.params.userId;
-      const profile = await UserProfileService.getProfile(userId);
-      sendResponse(res, 200, true, 'User profile retrieved successfully', profile);
+      const profile = await this.userProfileService.getProfile(userId);
+      sendResponse(res, 200, true, 'User profile retrieved successfully', { profile });
     } catch (error) {
-      next(error);
+      if (error instanceof NotFoundError) {
+        sendResponse(res, 404, false, error.message);
+      } else {
+        next(error);
+      }
     }
   }
 
-  static async updateProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async updateProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.params.userId;
       const updateData = req.body;
-      const updatedProfile = await UserProfileService.updateProfile(userId, updateData);
-      sendResponse(res, 200, true, 'User profile updated successfully', updatedProfile);
+      const updatedProfile = await this.userProfileService.updateProfile(userId, updateData);
+      sendResponse(res, 200, true, 'User profile updated successfully', { profile: updatedProfile });
     } catch (error) {
       next(error);
     }

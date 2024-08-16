@@ -21,9 +21,10 @@
     "noFallthroughCasesInSwitch": true, // Report errors for fallthrough cases in switch statements
     "resolveJsonModule": true, // Include modules imported with `.json` extension
     "isolatedModules": true, // Ensure each file can be safely transpiled without relying on other imports
-    "typeRoots": ["./node_modules/@types"], // Specify array of paths to lookup global type definitions
-    "lib": ["ES2020", "DOM"] // Specify library files to be included in the compilation
+    "typeRoots": ["src/node_modules/@types"], // Specify array of paths to lookup global type definitions
+    "lib": ["ES2020", "DOM"], // Specify library files to be included in the compilation
+    "experimentalDecorators": true
   },
-  "include": ["src"], // Include the specified files in the compilation
-  "exclude": ["node_modules", "dist"] // Exclude the specified files from the compilation
+  "include": ["src/**/*"], // Include the specified files in the compilation
+  "exclude": ["src/node_modules", "dist"] // Exclude the specified files from the compilation
 }
