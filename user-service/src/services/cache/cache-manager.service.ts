@@ -1,11 +1,11 @@
-import { ICacheService } from '../../interfaces/services/cache-service.interface';
+import { IRedisService } from '@/interfaces/services/redis.service.interface';
 import logger from '../../utils/logger';
 import { Document } from 'mongoose';
 
 const DEFAULT_CACHE_TTL = 3600;
 
 export class CacheManager {
-  constructor(private cacheService: ICacheService) {}
+  constructor(private cacheService: IRedisService) {}
 
   async cacheMethod<T>(key: string, method: () => Promise<T>, ttl: number = DEFAULT_CACHE_TTL): Promise<T> {
     const cachedResult = await this.cacheService.hgetall(key);

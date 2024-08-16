@@ -6,14 +6,20 @@ import { createRateLimiter } from '../middlewares/rate-limit.middleware';
 import { KYCController } from '../controller/kyc.controller';
 import { UserController } from '../controller/user.controller';
 import { UserProfileController } from '../controller/user-profile.controller';
+import { AuthMiddleware } from '../middlewares/auth.middleware';
 
-const router = (userController: UserController, userProfileController: UserProfileController, kycController: KYCController) => {
+const router = (
+  userController: UserController,
+  userProfileController: UserProfileController,
+  kycController: KYCController,
+  authMiddleware: AuthMiddleware
+) => {
   const apiRouter = express.Router();
   apiRouter.use(createRateLimiter());
 
-  apiRouter.use('/users', userRoutes(userController));
-  apiRouter.use('/profiles', userProfileRoutes(userProfileController));
-  apiRouter.use('/kyc', kycRoutes(kycController));
+  apiRouter.use('/users', userRoutes(userController, authMiddleware));
+  apiRouter.use('/profiles', userProfileRoutes(userProfileController, authMiddleware));
+  apiRouter.use('/kyc', kycRoutes(kycController, authMiddleware));
 
   return apiRouter;
 };

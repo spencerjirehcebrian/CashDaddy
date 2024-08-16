@@ -4,7 +4,8 @@ import { Request, Response, NextFunction } from 'express';
 import { NotAuthorizedError } from '../types/error.types';
 import { UserRole } from '../interfaces/models/user.interface';
 import { AuthPayload } from '../types/auth.types';
-import { AuthService } from '../services/auth/auth.service';
+import { IAuthService } from '../interfaces/services/auth-service.interface';
+import { IRedisService } from '../interfaces/services/redis.service.interface';
 
 type RoleChecker = (role: string) => boolean;
 
@@ -14,56 +15,67 @@ interface AuthOptions {
   ownershipParamName?: string;
 }
 
-const authService = new AuthService();
+export class AuthMiddleware {
+  constructor(
+    private authService: IAuthService,
+    private redisService: IRedisService
+  ) {}
 
-export const authMiddleware = (options: AuthOptions = {}) => {
-  const { roles, checkOwnership = false, ownershipParamName = 'userId' } = options;
+  private createMiddleware(options: AuthOptions = {}) {
+    const { roles, checkOwnership = false, ownershipParamName = 'userId' } = options;
 
-  return async (req: Request, _res: Response, next: NextFunction) => {
-    try {
-      const token = req.header('Authorization')?.replace('Bearer ', '');
+    return async (req: Request, _res: Response, next: NextFunction) => {
+      try {
+        const token = req.header('Authorization')?.replace('Bearer ', '');
 
-      if (!token) {
-        throw new NotAuthorizedError('Authentication required');
-      }
-
-      const decoded = authService.verifyToken(token);
-
-      // Check roles if specified
-      if (roles) {
-        const hasRequiredRole = Array.isArray(roles)
-          ? roles.includes(decoded.role as UserRole) || decoded.role === UserRole.SUPER_ADMIN
-          : roles(decoded.role) || decoded.role === UserRole.SUPER_ADMIN;
-
-        if (!hasRequiredRole) {
-          throw new NotAuthorizedError('Insufficient privileges');
+        if (!token) {
+          throw new NotAuthorizedError('Authentication required');
         }
-      }
 
-      // Attach the decoded payload to the request
-      req.user = decoded;
+        const decoded = this.authService.verifyToken(token);
 
-      // Check ownership if required
-      if (checkOwnership && decoded.role !== UserRole.ADMIN && decoded.role !== UserRole.SUPER_ADMIN) {
-        const resourceUserId = getResourceUserId(req, ownershipParamName);
-
-        if (decoded.userId !== resourceUserId) {
-          throw new NotAuthorizedError('Not authorized to access this resource');
+        // Check if token is blacklisted
+        const isBlacklisted = await this.redisService.isBlacklisted(token);
+        if (isBlacklisted) {
+          throw new NotAuthorizedError('User is logged out');
         }
+
+        // Check roles if specified
+        if (roles) {
+          const hasRequiredRole = Array.isArray(roles)
+            ? roles.includes(decoded.role as UserRole) || decoded.role === UserRole.SUPER_ADMIN
+            : roles(decoded.role) || decoded.role === UserRole.SUPER_ADMIN;
+
+          if (!hasRequiredRole) {
+            throw new NotAuthorizedError('Insufficient privileges');
+          }
+        }
+
+        // Attach the decoded payload to the request
+        req.user = decoded;
+
+        // Check ownership if required
+        if (checkOwnership && decoded.role !== UserRole.ADMIN && decoded.role !== UserRole.SUPER_ADMIN) {
+          const resourceUserId = this.getResourceUserId(req, ownershipParamName);
+
+          if (decoded.userId !== resourceUserId) {
+            throw new NotAuthorizedError('Not authorized to access this resource');
+          }
+        }
+
+        next();
+      } catch (error) {
+        next(error);
       }
+    };
+  }
 
-      next();
-    } catch (error) {
-      next(error);
-    }
-  };
-};
+  private getResourceUserId(req: Request, paramName: string): string {
+    return req.params[paramName] || (req.user as AuthPayload).userId;
+  }
 
-function getResourceUserId(req: Request, paramName: string): string {
-  return req.params[paramName] || (req.user as AuthPayload).userId;
+  public requireAuth = this.createMiddleware();
+  public requireAdmin = this.createMiddleware({ roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] });
+  public requireSuperAdmin = this.createMiddleware({ roles: [UserRole.SUPER_ADMIN] });
+  public requireOwnership = this.createMiddleware({ checkOwnership: true });
 }
-
-export const requireAuth = authMiddleware();
-export const requireAdmin = authMiddleware({ roles: [UserRole.ADMIN, UserRole.SUPER_ADMIN] });
-export const requireSuperAdmin = authMiddleware({ roles: [UserRole.SUPER_ADMIN] });
-export const requireOwnership = authMiddleware({ checkOwnership: true });
