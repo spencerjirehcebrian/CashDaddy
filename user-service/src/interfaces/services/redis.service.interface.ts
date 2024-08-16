@@ -1,4 +1,4 @@
-export interface ICacheService {
+export interface IRedisService {
   set(key: string, value: string, expiration?: number): Promise<void>;
   get(key: string): Promise<string | null>;
   del(key: string): Promise<void>;
@@ -9,4 +9,6 @@ export interface ICacheService {
   hdel(key: string, field: string): Promise<void>;
   hsetex(key: string, seconds: number, fields: Record<string, string>): Promise<void>;
   keys(pattern: string): Promise<string[]>;
+  addToBlacklist(token: string): Promise<void>;
+  isBlacklisted(token: string): Promise<boolean>;
 }

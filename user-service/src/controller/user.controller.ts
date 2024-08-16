@@ -4,11 +4,13 @@ import { IAuthService } from '../interfaces/services/auth-service.interface';
 import { sendResponse } from '../utils/response';
 import { BadRequestError, NotFoundError } from '../types/error.types';
 import { AuthPayload } from '../types/auth.types';
+import { IRedisService } from '@/interfaces/services/redis.service.interface';
 
 export class UserController {
   constructor(
     private userService: IUserService,
-    private authService: IAuthService
+    private authService: IAuthService,
+    private redisService: IRedisService
   ) {}
 
   async register(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -33,8 +35,16 @@ export class UserController {
     }
   }
 
-  async logout(_req: Request, res: Response): Promise<void> {
-    sendResponse(res, 200, true, 'Logout successful');
+  async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const token = req.header('Authorization')?.replace('Bearer ', '');
+      if (token) {
+        await this.redisService.addToBlacklist(token);
+      }
+      sendResponse(res, 200, true, 'Logout successful');
+    } catch (error) {
+      next(error);
+    }
   }
 
   async getOwnUser(req: Request, res: Response, next: NextFunction): Promise<void> {

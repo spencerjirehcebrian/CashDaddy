@@ -14,8 +14,7 @@ import { UserController } from './controller/user.controller';
 import { UserProfileController } from './controller/user-profile.controller';
 import { KYCService } from './services/db/kyc.service';
 import { KYCController } from './controller/kyc.controller';
-
-
+import { AuthMiddleware } from './middlewares/auth.middleware';
 
 const app = express();
 app.use(json());
@@ -40,13 +39,16 @@ const authService = new AuthService();
 const userProfileService = new UserProfileService();
 const kycService = new KYCService();
 
+// Create AuthMiddleware instance
+const authMiddleware = new AuthMiddleware(authService, redisService);
+
 // Create instances of controllers with injected dependencies
-const userController = new UserController(userService, authService);
+const userController = new UserController(userService, authService, redisService);
 const userProfileController = new UserProfileController(userProfileService);
 const kycController = new KYCController(kycService);
 
 // Set up routes
-app.use('/api', routes(userController, userProfileController, kycController));
+app.use('/api', routes(userController, userProfileController, kycController, authMiddleware));
 
 app.use(errorHandler);
 
