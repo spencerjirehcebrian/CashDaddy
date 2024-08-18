@@ -1,74 +1,77 @@
-import Joi, { ValidationResult } from 'joi';
-import { UserRole } from '../interfaces/user.interface';
+import { z } from 'zod';
+import { UserRole } from '../interfaces/models/user.interface';
 
 const validator = {
-  validateUserRegistration(user: Record<string, unknown>): ValidationResult {
-    const schema = Joi.object({
-      email: Joi.string().email().required(),
-      password: Joi.string().min(8).required(),
-      firstName: Joi.string().min(2).max(50).required(),
-      lastName: Joi.string().min(2).max(50).required(),
-      role: Joi.string()
-        .valid(...Object.values(UserRole))
-        .default(UserRole.USER)
+  validateUserRegistration(user: Record<string, unknown>) {
+    const schema = z.object({
+      email: z.string().email(),
+      password: z.string().min(8),
+      firstName: z.string().min(2).max(50),
+      lastName: z.string().min(2).max(50),
+      role: z.enum(Object.values(UserRole) as [string, ...string[]]).default(UserRole.USER)
     });
-    return schema.validate(user);
+    return schema.safeParse(user);
   },
 
-  validateLogin(data: Record<string, unknown>): ValidationResult {
-    const schema = Joi.object({
-      email: Joi.string().email().required(),
-      password: Joi.string().required()
+  validateLogin(data: Record<string, unknown>) {
+    const schema = z.object({
+      email: z.string().email(),
+      password: z.string()
     });
-    return schema.validate(data);
+    return schema.safeParse(data);
   },
 
-  validateUserUpdate(data: Record<string, unknown>): ValidationResult {
-    const schema = Joi.object({
-      email: Joi.string().email(),
-      firstName: Joi.string().min(2).max(50),
-      lastName: Joi.string().min(2).max(50),
-      role: Joi.string().valid(...Object.values(UserRole))
-    }).min(1);
-    return schema.validate(data);
+  validateUserUpdate(data: Record<string, unknown>) {
+    const schema = z
+      .object({
+        email: z.string().email().optional(),
+        firstName: z.string().min(2).max(50).optional(),
+        lastName: z.string().min(2).max(50).optional(),
+        role: z.enum(Object.values(UserRole) as [string, ...string[]]).optional()
+      })
+      .strict()
+      .refine((data) => Object.keys(data).length > 0, {
+        message: 'At least one field must be provided for update'
+      });
+    return schema.safeParse(data);
   },
 
-  validateUserProfile(profile: Record<string, unknown>): ValidationResult {
-    const schema = Joi.object({
-      user: Joi.string().required(),
-      dateOfBirth: Joi.date(),
-      address: Joi.string(),
-      phoneNumber: Joi.string()
+  validateUserProfile(profile: Record<string, unknown>) {
+    const schema = z.object({
+      user: z.string(),
+      dateOfBirth: z.date().optional(),
+      address: z.string().optional(),
+      phoneNumber: z.string().optional()
     });
-    return schema.validate(profile);
+    return schema.safeParse(profile);
   },
 
-  validateKYC(kyc: Record<string, unknown>): ValidationResult {
-    const schema = Joi.object({
-      user: Joi.string().required(),
-      idType: Joi.string().required(),
-      idNumber: Joi.string().required(),
-      verificationStatus: Joi.string().valid('pending', 'approved', 'rejected').default('pending')
+  validateKYC(kyc: Record<string, unknown>) {
+    const schema = z.object({
+      user: z.string(),
+      idType: z.string(),
+      idNumber: z.string(),
+      verificationStatus: z.enum(['pending', 'approved', 'rejected']).default('pending')
     });
-    return schema.validate(kyc);
+    return schema.safeParse(kyc);
   },
 
-  validatePaymentMethod(paymentMethod: Record<string, unknown>): ValidationResult {
-    const schema = Joi.object({
-      user: Joi.string().required(),
-      type: Joi.string().valid('credit_card', 'bank_account').required(),
-      details: Joi.object().required(),
-      isDefault: Joi.boolean().default(false)
+  validatePaymentMethod(paymentMethod: Record<string, unknown>) {
+    const schema = z.object({
+      user: z.string(),
+      type: z.enum(['credit_card', 'bank_account']),
+      details: z.record(z.unknown()),
+      isDefault: z.boolean().default(false)
     });
-    return schema.validate(paymentMethod);
+    return schema.safeParse(paymentMethod);
   },
 
-  validateId(id: string): ValidationResult {
-    return Joi.string().required().validate(id);
+  validateId(id: string) {
+    return z.string().safeParse(id);
   },
 
-  validateEmail(email: string): ValidationResult {
-    return Joi.string().email().required().validate(email);
+  validateEmail(email: string) {
+    return z.string().email().safeParse(email);
   }
 };
 
