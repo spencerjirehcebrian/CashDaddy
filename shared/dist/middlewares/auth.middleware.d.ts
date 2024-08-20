@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { IAuthService } from "../interfaces/services/auth-service.interface";
-import { IRedisService } from "../interfaces/services/redis.service.interface";
+import { IAuthService } from "../interfaces/services/auth-service.interface.js";
+import { IRedisService } from "../interfaces/services/redis.service.interface.js";
 export declare class AuthMiddleware {
     private authService;
     private redisService;

@@ -1,4 +1,4 @@
-import winston from 'winston';
+import winston from "winston";
 declare const customLogger: winston.Logger & {
     [key: string]: unknown;
 };

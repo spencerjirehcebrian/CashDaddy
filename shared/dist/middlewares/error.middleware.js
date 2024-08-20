@@ -1,6 +1,6 @@
-import { BadRequestError, NotAuthorizedError, ServerError, CustomError, InvalidObjectIdError, } from "../types/error.types";
-import logger from "../utils/logger";
-import { sendResponse } from "../utils/response";
+import { BadRequestError, CustomError, InvalidObjectIdError, NotAuthorizedError, ServerError } from "../types/error.types.js";
+import logger from "../utils/logger.js";
+import { sendResponse } from "../utils/response.js";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const errorHandler = (err, _req, res, _next) => {
     if (err.stack) {
@@ -49,4 +49,3 @@ const errorHandler = (err, _req, res, _next) => {
     return sendResponse(res, serializedError.statusCode, false, "Server error", serializedError);
 };
 export default errorHandler;
-//# sourceMappingURL=error.middleware.js.map

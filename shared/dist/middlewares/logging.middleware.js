@@ -1,4 +1,4 @@
-import logger from "../utils/logger";
+import logger from "../utils/logger.js";
 const requestLogger = (req, _res, next) => {
     logger.info(`${req.method} ${req.url}`, {
         body: req.body,
@@ -9,4 +9,3 @@ const requestLogger = (req, _res, next) => {
     next();
 };
 export default requestLogger;
-//# sourceMappingURL=logging.middleware.js.map

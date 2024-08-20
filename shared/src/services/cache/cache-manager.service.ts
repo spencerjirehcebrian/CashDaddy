@@ -1,6 +1,6 @@
-import { IRedisService } from "@/interfaces/services/redis.service.interface.js";
-import logger from "@/utils/logger.js";
 import { Document } from "mongoose";
+import { IRedisService } from "../../interfaces/services/redis.service.interface.js";
+import logger from "../../utils/logger.js";
 
 const DEFAULT_CACHE_TTL = 3600;
 

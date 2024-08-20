@@ -1,4 +1,4 @@
-import { BadRequestError } from "../types/error.types";
+import { BadRequestError } from "../types/error.types.js";
 export const zodValidation = (schema) => {
     return (req, _res, next) => {
         const result = schema.safeParse(req.body);
@@ -9,4 +9,3 @@ export const zodValidation = (schema) => {
         next();
     };
 };
-//# sourceMappingURL=validation.middleware.js.map

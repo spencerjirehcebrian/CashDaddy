@@ -16,4 +16,3 @@ max = 100 // limit each IP to 100 requests per windowMs
         }
     });
 };
-//# sourceMappingURL=rate-limit.middleware.js.map

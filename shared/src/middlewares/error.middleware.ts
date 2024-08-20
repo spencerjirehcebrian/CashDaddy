@@ -1,8 +1,13 @@
-import { BadRequestError, CustomError, InvalidObjectIdError, NotAuthorizedError, ServerError } from "@/types/error.types.js";
-import logger from "@/utils/logger.js";
-import { sendResponse } from "@/utils/response.js";
+import {
+  BadRequestError,
+  CustomError,
+  InvalidObjectIdError,
+  NotAuthorizedError,
+  ServerError,
+} from "../types/error.types.js";
 import { Request, Response, NextFunction } from "express";
-
+import logger from "../utils/logger.js";
+import { sendResponse } from "../utils/response.js";
 
 interface MongooseError extends Error {
   errors?: { [key: string]: { message: string } };
@@ -10,8 +15,7 @@ interface MongooseError extends Error {
   keyValue?: { [key: string]: string };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const errorHandler = (
+export const ErrorHandler = (
   err: Error | CustomError | MongooseError,
   _req: Request,
   res: Response,
@@ -110,4 +114,3 @@ const errorHandler = (
   );
 };
 
-export default errorHandler;

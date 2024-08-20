@@ -26,7 +26,7 @@
     "experimentalDecorators": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
+      "@/*": ["src/*"]
     }
   },
   "include": ["src/**/*", "tests/**/*", "jest.config.ts"],

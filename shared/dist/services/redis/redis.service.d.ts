@@ -1,4 +1,4 @@
-import { IRedisService } from "@/interfaces/services/redis.service.interface";
+import { IRedisService } from "../../interfaces/services/redis.service.interface.js";
 export declare class RedisService implements IRedisService {
     set(key: string, value: string, expiration?: number): Promise<void>;
     get(key: string): Promise<string | null>;

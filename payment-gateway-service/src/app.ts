@@ -2,13 +2,8 @@ import express from 'express';
 import { json } from 'body-parser';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { AuthService } from '@cash-daddy/shared';
-import { RedisService } from './services/redis/redis.service';
-import { setCacheManager } from './decorators/caching.decorator';
 import routes from './routes';
-import errorHandler from './middlewares/error.middleware';
-import { CacheManager } from './services/cache/cache-manager.service';
-import { AuthMiddleware } from './middlewares/auth.middleware';
+import { AuthMiddleware, AuthService, CacheManager, RedisService, setCacheManager } from '@cash-daddy/shared';
 
 const app = express();
 app.use(json());

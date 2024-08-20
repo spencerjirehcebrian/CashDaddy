@@ -1,6 +1,6 @@
-import { config } from "@/config/index.js";
 import { Kafka, Producer } from "kafkajs";
 import logger from "./logger.js";
+import { config } from "../config/index.js";
 
 let producer: Producer;
 export const connectKafka = async () => {

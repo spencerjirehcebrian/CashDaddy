@@ -1,14 +1,27 @@
 {
   "name": "@cash-daddy/shared",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "type": "module",
-  "scripts": {
-    "build": "tsc"
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "types": "./dist/types/index.d.ts"
+    }
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:types": "tsc -p tsconfig.types.json",
+    "prepublishOnly": "npm run build"
+  },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",

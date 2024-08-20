@@ -1,7 +1,7 @@
-import logger from "@/utils/logger.js";
 import { Request, Response, NextFunction } from "express";
+import logger from "../utils/logger.js";
 
-const requestLogger = (
+export const RequestLogger = (
   req: Request,
   _res: Response,
   next: NextFunction
@@ -14,5 +14,3 @@ const requestLogger = (
   });
   next();
 };
-
-export default requestLogger;

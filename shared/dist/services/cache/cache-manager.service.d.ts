@@ -1,4 +1,4 @@
-import { IRedisService } from '@/interfaces/services/redis.service.interface';
+import { IRedisService } from "../../interfaces/services/redis.service.interface.js";
 export declare class CacheManager {
     private cacheService;
     constructor(cacheService: IRedisService);

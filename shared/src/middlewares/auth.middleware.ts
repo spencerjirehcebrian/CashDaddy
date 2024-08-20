@@ -1,12 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../types/express.d.ts" />
-import { UserRole } from "@/interfaces/models/user.interface.js";
-import { IAuthService } from "@/interfaces/services/auth-service.interface.js";
-import { IRedisService } from "@/interfaces/services/redis.service.interface.js";
-import { AuthPayload } from "@/types/auth.types.js";
-import { NotAuthorizedError } from "@/types/error.types.js";
 import { Request, Response, NextFunction } from "express";
-
+import { UserRole } from "../interfaces/models/user.interface.js";
+import { IAuthService } from "../interfaces/services/auth-service.interface.js";
+import { IRedisService } from "../interfaces/services/redis.service.interface.js";
+import { NotAuthorizedError } from "../types/error.types.js";
+import { AuthPayload } from "../types/auth.types.js";
 
 type RoleChecker = (role: string) => boolean;
 

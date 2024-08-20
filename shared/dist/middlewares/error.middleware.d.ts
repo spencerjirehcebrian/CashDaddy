@@ -1,5 +1,5 @@
+import { CustomError } from "../types/error.types.js";
 import { Request, Response, NextFunction } from "express";
-import { CustomError } from "../types/error.types";
 interface MongooseError extends Error {
     errors?: {
         [key: string]: {

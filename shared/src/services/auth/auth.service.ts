@@ -1,8 +1,8 @@
-import { config } from "@/config/index.js";
-import { IAuthService } from "@/interfaces/services/auth-service.interface.js";
-import { AuthPayload } from "@/types/auth.types.js";
-import { NotAuthorizedError } from "@/types/error.types.js";
 import jwt from "jsonwebtoken";
+import { config } from "../../config/index.js";
+import { IAuthService } from "../../interfaces/services/auth-service.interface.js";
+import { AuthPayload } from "../../types/auth.types.js";
+import { NotAuthorizedError } from "../../types/error.types.js";
 
 const JWT_SECRET = config.JWT_SECRET!;
 
