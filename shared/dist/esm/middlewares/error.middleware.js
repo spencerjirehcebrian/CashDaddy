@@ -1,12 +1,12 @@
 import { BadRequestError, CustomError, InvalidObjectIdError, NotAuthorizedError, ServerError, } from "../types/error.types.js";
-import logger from "../utils/logger.js";
 import { sendResponse } from "../utils/response.js";
+import { CustomLogger } from "../utils/logger.js";
 export const ErrorHandler = (err, _req, res, _next) => {
     if (err.stack) {
-        logger.error(err.stack);
+        CustomLogger.error(err.stack);
     }
     else {
-        logger.error("Error stack is undefined");
+        CustomLogger.error("Error stack is undefined");
     }
     if (err instanceof CustomError) {
         const serializedError = err.serializeErrors();

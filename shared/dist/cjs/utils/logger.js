@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CustomLogger = void 0;
 const winston_1 = __importDefault(require("winston"));
 const winston_daily_rotate_file_1 = __importDefault(require("winston-daily-rotate-file"));
 const index_js_1 = require("../config/index.js");
@@ -105,12 +106,11 @@ function processLogArgs(args) {
     return { message, meta };
 }
 // Extend the logger with a custom log method
-const customLogger = logger;
+exports.CustomLogger = logger;
 Object.keys(customLevels).forEach((level) => {
-    customLogger[level] = (...args) => {
+    exports.CustomLogger[level] = (...args) => {
         const { message, meta } = processLogArgs(args);
         const combinedMeta = Object.assign(Object.assign({}, logger.defaultMeta), meta);
         logger.log(level, message, combinedMeta);
     };
 });
-exports.default = customLogger;

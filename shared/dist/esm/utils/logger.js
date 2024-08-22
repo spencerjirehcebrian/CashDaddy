@@ -88,12 +88,11 @@ function processLogArgs(args) {
     return { message, meta };
 }
 // Extend the logger with a custom log method
-const customLogger = logger;
+export const CustomLogger = logger;
 Object.keys(customLevels).forEach((level) => {
-    customLogger[level] = (...args) => {
+    CustomLogger[level] = (...args) => {
         const { message, meta } = processLogArgs(args);
         const combinedMeta = { ...logger.defaultMeta, ...meta };
         logger.log(level, message, combinedMeta);
     };
 });
-export default customLogger;

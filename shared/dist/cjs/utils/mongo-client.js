@@ -14,15 +14,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectMongoDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const logger_js_1 = __importDefault(require("./logger.js"));
 const index_js_1 = require("../config/index.js");
+const logger_js_1 = require("./logger.js");
 const connectMongoDB = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield mongoose_1.default.connect(index_js_1.config.MONGO_URI);
-        logger_js_1.default.info("Connected to MongoDB:", index_js_1.config.MONGO_URI);
+        logger_js_1.CustomLogger.info("Connected to MongoDB:", index_js_1.config.MONGO_URI);
     }
     catch (error) {
-        logger_js_1.default.error("Failed to connect to MongoDB:", error);
+        logger_js_1.CustomLogger.error("Failed to connect to MongoDB:", error);
         throw error;
     }
 });

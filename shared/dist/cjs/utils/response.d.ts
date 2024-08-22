@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Response } from "express";
 export interface StandardResponse<T> {
     success: boolean;
     message: string;

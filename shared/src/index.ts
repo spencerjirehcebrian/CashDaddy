@@ -11,7 +11,7 @@ export * from "./interfaces/services/redis.service.interface.js";
 
 // Middlewares
 export * from "./middlewares/auth.middleware.js";
-export * from "./middlewares/error.middleware.js";
+export { ErrorHandler } from "./middlewares/error.middleware.js";
 export * from "./middlewares/logging.middleware.js";
 export * from "./middlewares/rate-limit.middleware.js";
 export * from "./middlewares/validation.middleware.js";
@@ -28,7 +28,7 @@ export * from "./types/express.js";
 
 // Utils
 export * from "./utils/kafka-client.js";
-export * from "./utils/logger.js";
+export { CustomLogger } from "./utils/logger.js";
 export * from "./utils/mongo-client.js";
 export * from "./utils/redis-client.js";
 export * from "./utils/response.js";

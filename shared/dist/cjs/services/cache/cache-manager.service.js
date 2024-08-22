@@ -19,13 +19,10 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CacheManager = void 0;
 const mongoose_1 = require("mongoose");
-const logger_js_1 = __importDefault(require("../../utils/logger.js"));
+const logger_js_1 = require("../../utils/logger.js");
 const DEFAULT_CACHE_TTL = 3600;
 class CacheManager {
     constructor(cacheService) {
@@ -35,7 +32,7 @@ class CacheManager {
         return __awaiter(this, arguments, void 0, function* (key, method, ttl = DEFAULT_CACHE_TTL) {
             const cachedResult = yield this.cacheService.hgetall(key);
             if (Object.keys(cachedResult).length > 0) {
-                logger_js_1.default.info(`Cache hit: ${key}`);
+                logger_js_1.CustomLogger.info(`Cache hit: ${key}`);
                 return this.deserializeData(cachedResult);
             }
             const result = yield method();
@@ -89,7 +86,7 @@ class CacheManager {
                 deserialized[key] = JSON.parse(value);
             }
             catch (error) {
-                logger_js_1.default.error(`Failed to parse value for key ${key}: ${error instanceof Error ? error.message : String(error)}`);
+                logger_js_1.CustomLogger.error(`Failed to parse value for key ${key}: ${error instanceof Error ? error.message : String(error)}`);
                 deserialized[key] = value;
             }
         }

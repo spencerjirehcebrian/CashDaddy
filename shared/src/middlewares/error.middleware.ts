@@ -6,8 +6,8 @@ import {
   ServerError,
 } from "../types/error.types.js";
 import { Request, Response, NextFunction } from "express";
-import logger from "../utils/logger.js";
 import { sendResponse } from "../utils/response.js";
+import { CustomLogger } from "../utils/logger.js";
 
 interface MongooseError extends Error {
   errors?: { [key: string]: { message: string } };
@@ -22,9 +22,9 @@ export const ErrorHandler = (
   _next: NextFunction
 ): Response | void => {
   if (err.stack) {
-    logger.error(err.stack);
+    CustomLogger.error(err.stack);
   } else {
-    logger.error("Error stack is undefined");
+    CustomLogger.error("Error stack is undefined");
   }
 
   if (err instanceof CustomError) {
@@ -113,4 +113,3 @@ export const ErrorHandler = (
     serializedError
   );
 };
-

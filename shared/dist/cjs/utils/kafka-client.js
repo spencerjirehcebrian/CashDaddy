@@ -8,14 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getKafkaProducer = exports.produceMessage = exports.disconnectKafka = exports.connectKafka = void 0;
 const kafkajs_1 = require("kafkajs");
-const logger_js_1 = __importDefault(require("./logger.js"));
 const index_js_1 = require("../config/index.js");
+const logger_js_1 = require("./logger.js");
 let producer;
 const connectKafka = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -25,11 +22,11 @@ const connectKafka = () => __awaiter(void 0, void 0, void 0, function* () {
         });
         producer = kafka.producer();
         yield producer.connect();
-        logger_js_1.default.info("Connected to Kafka:", index_js_1.config.KAFKA_BROKERS);
+        logger_js_1.CustomLogger.info("Connected to Kafka:", index_js_1.config.KAFKA_BROKERS);
         return producer;
     }
     catch (error) {
-        logger_js_1.default.error("Failed to connect to Kafka:", error);
+        logger_js_1.CustomLogger.error("Failed to connect to Kafka:", error);
         throw error;
     }
 });

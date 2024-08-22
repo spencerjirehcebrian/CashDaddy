@@ -1,6 +1,5 @@
 import winston from "winston";
-declare const customLogger: winston.Logger & {
+export declare const CustomLogger: winston.Logger & {
     [key: string]: unknown;
 };
-export default customLogger;
 //# sourceMappingURL=logger.d.ts.map

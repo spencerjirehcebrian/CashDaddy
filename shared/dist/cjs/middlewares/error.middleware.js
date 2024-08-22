@@ -1,18 +1,15 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ErrorHandler = void 0;
 const error_types_js_1 = require("../types/error.types.js");
-const logger_js_1 = __importDefault(require("../utils/logger.js"));
 const response_js_1 = require("../utils/response.js");
+const logger_js_1 = require("../utils/logger.js");
 const ErrorHandler = (err, _req, res, _next) => {
     if (err.stack) {
-        logger_js_1.default.error(err.stack);
+        logger_js_1.CustomLogger.error(err.stack);
     }
     else {
-        logger_js_1.default.error("Error stack is undefined");
+        logger_js_1.CustomLogger.error("Error stack is undefined");
     }
     if (err instanceof error_types_js_1.CustomError) {
         const serializedError = err.serializeErrors();

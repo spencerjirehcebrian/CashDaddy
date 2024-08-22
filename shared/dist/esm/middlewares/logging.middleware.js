@@ -1,6 +1,6 @@
-import logger from "../utils/logger.js";
+import { CustomLogger } from "../utils/logger";
 export const RequestLogger = (req, _res, next) => {
-    logger.info(`${req.method} ${req.url}`, {
+    CustomLogger.info(`${req.method} ${req.url}`, {
         body: req.body,
         params: req.params,
         query: req.query,

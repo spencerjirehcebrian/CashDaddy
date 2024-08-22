@@ -113,14 +113,14 @@ function processLogArgs(args: unknown[]): { message: string; meta: object } {
 }
 
 // Extend the logger with a custom log method
-const customLogger = logger as winston.Logger & { [key: string]: unknown };
+export const CustomLogger = logger as winston.Logger & {
+  [key: string]: unknown;
+};
 
 Object.keys(customLevels).forEach((level) => {
-  customLogger[level] = (...args: unknown[]) => {
+  CustomLogger[level] = (...args: unknown[]) => {
     const { message, meta } = processLogArgs(args);
     const combinedMeta = { ...logger.defaultMeta, ...meta };
     logger.log(level, message, combinedMeta);
   };
 });
-
-export default customLogger;

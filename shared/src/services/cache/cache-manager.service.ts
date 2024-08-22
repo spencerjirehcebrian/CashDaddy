@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
 import { IRedisService } from "../../interfaces/services/redis.service.interface.js";
-import logger from "../../utils/logger.js";
+import { CustomLogger } from "../../utils/logger.js";
 
 const DEFAULT_CACHE_TTL = 3600;
 
@@ -14,7 +14,7 @@ export class CacheManager {
   ): Promise<T> {
     const cachedResult = await this.cacheService.hgetall(key);
     if (Object.keys(cachedResult).length > 0) {
-      logger.info(`Cache hit: ${key}`);
+      CustomLogger.info(`Cache hit: ${key}`);
       return this.deserializeData(cachedResult) as T;
     }
 
@@ -76,7 +76,7 @@ export class CacheManager {
       try {
         deserialized[key] = JSON.parse(value);
       } catch (error) {
-        logger.error(
+        CustomLogger.error(
           `Failed to parse value for key ${key}: ${
             error instanceof Error ? error.message : String(error)
           }`
