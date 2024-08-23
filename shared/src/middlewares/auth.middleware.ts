@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="../types/express.d.ts" />
 import { Request, Response, NextFunction } from "express";
 import { UserRole } from "../interfaces/models/user.interface.js";

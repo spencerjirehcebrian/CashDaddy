@@ -8,4 +8,4 @@ declare global {
   }
 }
 
-export * from "./express.d.types";
+export {};

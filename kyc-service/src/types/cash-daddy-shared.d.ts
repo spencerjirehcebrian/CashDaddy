@@ -1,18 +1,14 @@
 declare module '@cash-daddy/shared' {
-  export * from '@cash-daddy/shared/dist/types/decorators';
-  export * from '@cash-daddy/shared/dist/types/interfaces';
-  export * from '@cash-daddy/shared/dist/types/middlewares';
-  export * from '@cash-daddy/shared/dist/types/services';
-  export * from '@cash-daddy/shared/dist/types/types';
-  export * from '@cash-daddy/shared/dist/types/utils';
+  export * from '@cash-daddy/shared/dist/esm/index.js';
 }
 
-import '@cash-daddy/shared';
+import { AuthPayload } from '@cash-daddy/shared';
 
+// Augment the Express namespace
 declare global {
   namespace Express {
     interface Request {
-      user?: import('@cash-daddy/shared').AuthPayload;
+      user?: AuthPayload;
     }
   }
 }

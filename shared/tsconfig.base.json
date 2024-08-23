@@ -8,7 +8,12 @@
     "allowJs": true,
     "declaration": true,
     "declarationMap": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "module": "ESNext",
+    "target": "ES2020",
+    "outDir": "./dist",
+    "rootDir": "./src"
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
