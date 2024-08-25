@@ -34,7 +34,6 @@ __exportStar(require("./middlewares/validation.middleware.js"), exports);
 __exportStar(require("./services/auth/auth.service.js"), exports);
 __exportStar(require("./services/cache/cache-manager.service.js"), exports);
 __exportStar(require("./services/redis/redis.service.js"), exports);
-/// <reference path="./types/express.d.ts" />
 __exportStar(require("./types/express.js"), exports);
 // Types
 __exportStar(require("./types/auth.types.js"), exports);

@@ -1,0 +1,8 @@
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","service":"user","timestamp":"2024-08-23 20:03:24"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","service":"user","timestamp":"2024-08-23 20:03:24"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","service":"user","timestamp":"2024-08-23 20:03:24"}
+{"level":"info","message":"User microservice listening on port 3000","service":"user","timestamp":"2024-08-23 20:03:24"}
+{"email":"user2@example.com","level":"info","message":"User logged in","role":"USER","service":"user","status":"ACTIVE","timestamp":"2024-08-23 20:03:36","userId":"66bedfeb2bd7bc19e5c04adc","verificationStatus":"NOT_SUBMITTED"}
+{"level":"info","message":"Response: 200 Login successful","service":"user","timestamp":"2024-08-23 20:03:36"}
+{"email":"user2@example.com","level":"info","message":"User logged in","role":"USER","service":"user","status":"ACTIVE","timestamp":"2024-08-23 20:06:04","userId":"66bedfeb2bd7bc19e5c04adc","verificationStatus":"NOT_SUBMITTED"}
+{"level":"info","message":"Response: 200 Login successful","service":"user","timestamp":"2024-08-23 20:06:04"}

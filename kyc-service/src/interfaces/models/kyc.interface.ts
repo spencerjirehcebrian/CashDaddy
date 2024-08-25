@@ -20,6 +20,7 @@ export enum AddressProofType {
 }
 
 export interface IKYC extends Document {
+  _id: Types.ObjectId;
   user: Types.ObjectId;
   idType: IdType;
   idNumber: string;

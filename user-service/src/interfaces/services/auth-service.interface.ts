@@ -1,4 +1,4 @@
-import { AuthPayload } from '../../types/auth.types';
+import { AuthPayload } from '@cash-daddy/shared';
 
 export interface IAuthService {
   generateToken(payload: AuthPayload): string;

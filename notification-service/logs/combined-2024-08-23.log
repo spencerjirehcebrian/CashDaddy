@@ -1,0 +1,22 @@
+{"level":"info","message":"Server running on port 3000","service":"shared","timestamp":"2024-08-23 17:29:45"}
+{"level":"info","message":"Server running on port 3000","service":"shared","timestamp":"2024-08-23 17:30:27"}
+{"level":"info","message":"Server running on port 3000","service":"shared","timestamp":"2024-08-23 17:31:10"}
+{"level":"info","message":"Server running on port 3000","service":"shared","timestamp":"2024-08-23 17:37:35"}
+{"level":"info","message":"Server running on port 3000","service":"shared","timestamp":"2024-08-23 17:47:43"}
+{"level":"info","message":"Server running on port 3000","service":"shared","timestamp":"2024-08-23 17:48:41"}
+{"level":"info","message":"Server running on port 3000","service":"shared","timestamp":"2024-08-23 17:48:57"}
+{"level":"info","message":"Server running on port 3000","service":"shared","timestamp":"2024-08-23 17:52:42"}
+{"level":"error","message":"connect ECONNREFUSED 127.0.0.1:27017","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":null,"stale":false,"type":"Unknown"},"service":"shared","timestamp":"2024-08-23 17:56:50"}
+{"level":"error","message":"connect ECONNREFUSED 127.0.0.1:27017","reason":{"commonWireVersion":0,"compatible":true,"heartbeatFrequencyMS":10000,"localThresholdMS":15,"logicalSessionTimeoutMinutes":null,"maxElectionId":null,"maxSetVersion":null,"servers":{},"setName":null,"stale":false,"type":"Unknown"},"service":"shared","timestamp":"2024-08-23 17:56:50"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","service":"shared","timestamp":"2024-08-23 17:57:47"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","service":"shared","timestamp":"2024-08-23 17:57:47"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","service":"shared","timestamp":"2024-08-23 17:57:47"}
+{"level":"info","message":"User microservice listening on port 3000","service":"shared","timestamp":"2024-08-23 17:57:47"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","service":"shared","timestamp":"2024-08-23 18:01:02"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","service":"shared","timestamp":"2024-08-23 18:01:02"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","service":"shared","timestamp":"2024-08-23 18:01:02"}
+{"level":"info","message":"User microservice listening on port 3000","service":"shared","timestamp":"2024-08-23 18:01:02"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","service":"shared","timestamp":"2024-08-23 19:04:17"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","service":"shared","timestamp":"2024-08-23 19:04:17"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","service":"shared","timestamp":"2024-08-23 19:04:17"}
+{"level":"info","message":"User microservice listening on port 3000","service":"shared","timestamp":"2024-08-23 19:04:17"}

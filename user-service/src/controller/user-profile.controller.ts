@@ -1,11 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
-import { IUserProfileService } from '../interfaces/services/user-profile-service.interface';
-import { sendResponse } from '../utils/response';
-import { BadRequestError, NotFoundError } from '../types/error.types';
-import { AuthPayload } from '../types/auth.types';
+import { IUserProfileService } from '../interfaces/services/user-profile-service.interface.js';
+import { Producer } from 'kafkajs';
+import { AuthPayload, BadRequestError, NotFoundError, sendResponse } from '@cash-daddy/shared';
 
 export class UserProfileController {
-  constructor(private userProfileService: IUserProfileService) {}
+  constructor(
+    private userProfileService: IUserProfileService,
+    private kafkaProducer: Producer
+  ) {}
 
   async createProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -76,5 +78,24 @@ export class UserProfileController {
     } catch (error) {
       next(error);
     }
+  }
+
+  // Kakfa Actions
+  async handleGetUserProfile(userId: string): Promise<void> {
+    const profile = await this.userProfileService.getProfile(userId);
+    if (!profile) {
+      throw new NotFoundError('User profile not found');
+    }
+    await this.kafkaProducer.send({
+      topic: 'kyc-events',
+      messages: [
+        {
+          value: JSON.stringify({
+            action: 'returnUserProfile',
+            payload: profile
+          })
+        }
+      ]
+    });
   }
 }

@@ -1,4 +1,4 @@
-import { IUserProfile } from '../models/user-profile.interface';
+import { IUserProfile } from '../models/user-profile.interface.js';
 
 export interface IUserProfileService {
   createProfile(

@@ -1,6 +1,5 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
-import { config } from "../config/index.js";
 
 // Define custom log levels
 const customLevels = {
@@ -80,19 +79,17 @@ const logger = winston.createLogger({
   transports: [errorRotateTransport, combinedRotateTransport],
 });
 
-if (config.NODE_ENV !== "production") {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize({ all: true }),
-        winston.format.timestamp({
-          format: "YYYY-MM-DD HH:mm:ss",
-        }),
-        consoleFormat
-      ),
-    })
-  );
-}
+logger.add(
+  new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize({ all: true }),
+      winston.format.timestamp({
+        format: "YYYY-MM-DD HH:mm:ss",
+      }),
+      consoleFormat
+    ),
+  })
+);
 
 // Helper function to process log arguments
 function processLogArgs(args: unknown[]): { message: string; meta: object } {

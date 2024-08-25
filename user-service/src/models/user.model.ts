@@ -1,5 +1,5 @@
 import mongoose, { Model, Schema } from 'mongoose';
-import { IUser, UserRole, UserStatus } from '../interfaces/models/user.interface';
+import { IUser, UserRole, UserStatus } from '../interfaces/models/user.interface.js';
 import bcryptjs from 'bcryptjs';
 
 interface IUserMethods {
@@ -16,6 +16,7 @@ const userSchema = new Schema<IUser, UserModel, IUserMethods>(
     lastName: { type: String, required: true },
     role: { type: String, enum: Object.values(UserRole), default: UserRole.USER },
     status: { type: String, enum: Object.values(UserStatus), default: UserStatus.ACTIVE },
+    stripeCustomerId: { type: String },
     userProfile: { type: Schema.Types.ObjectId, ref: 'UserProfile' },
     kyc: { type: Schema.Types.ObjectId, ref: 'KnowYourCustomer' }
   },

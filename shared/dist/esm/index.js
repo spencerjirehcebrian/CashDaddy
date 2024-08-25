@@ -16,7 +16,6 @@ export * from "./middlewares/validation.middleware.js";
 export * from "./services/auth/auth.service.js";
 export * from "./services/cache/cache-manager.service.js";
 export * from "./services/redis/redis.service.js";
-/// <reference path="./types/express.d.ts" />
 export * from "./types/express.js";
 // Types
 export * from "./types/auth.types.js";

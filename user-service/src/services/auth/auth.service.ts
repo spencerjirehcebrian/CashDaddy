@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
-import { config } from '../../config';
-import { AuthPayload } from '../../types/auth.types';
-import { IAuthService } from '../../interfaces/services/auth-service.interface';
-import { NotAuthorizedError } from '../../types/error.types';
+import { config } from '../../config/index.js';
+import { IAuthService } from '../../interfaces/services/auth-service.interface.js';
+import { AuthPayload, NotAuthorizedError } from '@cash-daddy/shared';
 
 const JWT_SECRET = config.JWT_SECRET!;
 

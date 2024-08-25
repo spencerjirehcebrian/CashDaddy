@@ -1,10 +1,10 @@
-/// <reference path="../types/express.d.ts" />
 import { Request, Response, NextFunction } from "express";
 import { UserRole } from "../interfaces/models/user.interface.js";
 import { IAuthService } from "../interfaces/services/auth-service.interface.js";
 import { IRedisService } from "../interfaces/services/redis.service.interface.js";
 import { NotAuthorizedError } from "../types/error.types.js";
 import { AuthPayload } from "../types/auth.types.js";
+import { VerificationStatus } from "../interfaces/models/kyc.interface.js";
 
 type RoleChecker = (role: string) => boolean;
 
@@ -12,6 +12,7 @@ interface AuthOptions {
   roles?: UserRole[] | RoleChecker;
   checkOwnership?: boolean;
   ownershipParamName?: string;
+  checkVerificationStatus?: boolean;
 }
 
 export class AuthMiddleware {
@@ -25,6 +26,7 @@ export class AuthMiddleware {
       roles,
       checkOwnership = false,
       ownershipParamName = "userId",
+      checkVerificationStatus = false,
     } = options;
 
     return async (req: Request, _res: Response, next: NextFunction) => {
@@ -52,6 +54,13 @@ export class AuthMiddleware {
 
           if (!hasRequiredRole) {
             throw new NotAuthorizedError("Insufficient privileges");
+          }
+        }
+
+        // Check verification status if required
+        if (checkVerificationStatus) {
+          if (decoded.verificationStatus !== VerificationStatus.APPROVED) {
+            throw new NotAuthorizedError("User is not verified");
           }
         }
 
@@ -95,4 +104,7 @@ export class AuthMiddleware {
     roles: [UserRole.SUPER_ADMIN],
   });
   public requireOwnership = this.createMiddleware({ checkOwnership: true });
+  public requireVerified = this.createMiddleware({
+    checkVerificationStatus: true,
+  });
 }

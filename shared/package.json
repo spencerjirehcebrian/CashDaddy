@@ -1,51 +1,51 @@
 {
   "name": "@cash-daddy/shared",
-  "version": "1.0.7",
+  "version": "1.4.8",
+  "description": "Core utilities and services for CashDaddy application",
   "type": "module",
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/index.d.ts",
-  "declaration": true,
-  "declarationMap": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "require": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      },
-      "import": {
-        "types": "./dist/types/index.d.ts",
-        "default": "./dist/esm/index.js"
-      }
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "npm run build:cjs && npm run build:esm && npm run build:types",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
-    "build:esm": "tsc -p tsconfig.esm.json",
-    "build:types": "tsc -p tsconfig.types.json",
+    "build": "tsc",
     "prepublishOnly": "npm run build"
   },
-  "devDependencies": {
-    "@types/express": "^4.17.21",
-    "@types/jsonwebtoken": "^9.0.6",
-    "@types/node": "^22.4.0",
-    "typescript": "^5.5.4"
-  },
+  "keywords": [
+    "cashdaddy",
+    "utilities",
+    "services"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
   "dependencies": {
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "express-rate-limit": "^7.4.0",
-    "http-status-codes": "^2.3.0",
-    "jsonwebtoken": "^9.0.2",
-    "kafkajs": "^2.2.4",
-    "mongoose": "^8.5.3",
-    "redis": "^4.7.0",
-    "winston": "^3.14.2",
-    "winston-daily-rotate-file": "^5.0.0",
-    "zod": "^3.23.8"
+    "dotenv": "^16.0.0",
+    "express": "^4.17.1",
+    "express-rate-limit": "^6.0.0",
+    "http-status-codes": "^2.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "kafkajs": "^2.0.0",
+    "mongoose": "^6.0.0",
+    "redis": "^4.0.0",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.0",
+    "zod": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/node": "^16.11.12",
+    "typescript": "^4.5.4"
+  },
+  "peerDependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.0.0"
   }
 }

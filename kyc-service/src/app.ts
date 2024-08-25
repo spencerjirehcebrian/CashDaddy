@@ -1,43 +1,36 @@
 import express from 'express';
-import { json } from 'body-parser';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import { AuthMiddleware, AuthService, CacheManager, ErrorHandler, RedisService, setCacheManager } from '@cash-daddy/shared';
-import { KYCService } from './services/db/kyc.service.js';
+import { AuthMiddleware, AuthService, ErrorHandler } from '@cash-daddy/shared';
 import { KYCController } from './controller/kyc.controller.js';
 import routes from './routes/index.js';
+import { RedisService } from './services/redis/redis.service.js';
+import { CacheManager } from './services/cache/cache-manager.service.js';
+import { setCacheManager } from './decorators/caching.decorator.js';
 
-const app = express();
-app.use(json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
+const createApp = (kycController: KYCController, redisService: RedisService, authService: AuthService) => {
+  const app = express();
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
-const corsOptions = {
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  const corsOptions = {
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+  };
+
+  app.use(cors(corsOptions));
+
+  const cacheManager = new CacheManager(redisService);
+  setCacheManager(cacheManager);
+
+  // Create AuthMiddleware instance
+  const authMiddleware = new AuthMiddleware(authService, redisService);
+
+  // Set up routes
+  app.use('/api', routes(kycController, authMiddleware));
+
+  app.use(ErrorHandler);
+
+  return app;
 };
-
-app.use(cors(corsOptions));
-
-const authService = new AuthService();
-
-const redisService = new RedisService();
-const cacheManager = new CacheManager(redisService);
-setCacheManager(cacheManager);
-
-// Create instances of services
-const kycService = new KYCService();
-
-// Create AuthMiddleware instance
-const authMiddleware = new AuthMiddleware(authService, redisService);
-
-// Create instances of controllers with injected dependencies
-const kycController = new KYCController(kycService);
-
-// Set up routes
-app.use('/api', routes(kycController, authMiddleware));
-
-app.use(ErrorHandler);
-
-export default app;
+export default createApp;

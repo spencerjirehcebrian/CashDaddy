@@ -1,3 +1,2 @@
-export * from './kyc.interface';
-export * from './user-profile.interface';
-export * from './user.interface';
+export * from './user-profile.interface.js';
+export * from './user.interface.js';

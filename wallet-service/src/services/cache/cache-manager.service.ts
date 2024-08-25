@@ -1,0 +1,121 @@
+import { Document } from 'mongoose';
+import { IRedisService } from '../../interfaces/services/redis.service.interface.js';
+import { CustomLogger } from '@cash-daddy/shared';
+
+const DEFAULT_CACHE_TTL = 3600;
+
+export class CacheManager {
+  constructor(private cacheService: IRedisService) {
+    if (!cacheService) {
+      CustomLogger.error('CacheService is not initialized in CacheManager constructor.');
+    } else {
+      CustomLogger.info('CacheManager initialized with CacheService.');
+    }
+  }
+
+  async cacheMethod<T>(key: string, method: () => Promise<T>, ttl: number = DEFAULT_CACHE_TTL): Promise<T> {
+    CustomLogger.info(`Attempting to cache method with key: ${key}`);
+
+    const cachedResult = await this.cacheService.hgetall(key);
+    if (Object.keys(cachedResult).length > 0) {
+      CustomLogger.info(`Cache hit: ${key}`);
+      return this.deserializeData(cachedResult) as T;
+    }
+
+    CustomLogger.info(`Cache miss: ${key}. Executing method and caching result.`);
+    const result = await method();
+    const serializedData = this.serializeData(this.applyMongooseTransform(result));
+    await this.cacheService.hsetex(key, ttl, serializedData);
+
+    CustomLogger.info(`Method result cached with key: ${key}`);
+    return result;
+  }
+
+  async invalidateCache(key: string): Promise<void> {
+    if (!this.cacheService) {
+      CustomLogger.error('CacheService is not initialized. Cannot invalidate cache.');
+      throw new Error('CacheService is not initialized.');
+    }
+    CustomLogger.info(`Invalidating cache with key: ${key}`);
+    await this.cacheService.del(key);
+  }
+
+  private serializeData(data: unknown): Record<string, string> {
+    if (Array.isArray(data)) {
+      return {
+        __isArray: 'true',
+        ...data.reduce(
+          (acc, item, index) => {
+            acc[index.toString()] = JSON.stringify(item);
+            return acc;
+          },
+          {} as Record<string, string>
+        )
+      };
+    } else if (data && typeof data === 'object') {
+      return this.serializeForHash(this.extractData(data));
+    } else {
+      return { value: JSON.stringify(data) };
+    }
+  }
+
+  private deserializeData(data: Record<string, string>): unknown {
+    if (data.__isArray === 'true') {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { __isArray, ...arrayData } = data;
+      return Object.entries(arrayData)
+        .sort(([a], [b]) => parseInt(a) - parseInt(b))
+        .map(([, value]) => JSON.parse(value));
+    } else {
+      return this.deserializeHashData(data);
+    }
+  }
+  private serializeForHash(data: Record<string, unknown>): Record<string, string> {
+    const serialized: Record<string, string> = {};
+    for (const [key, value] of Object.entries(data)) {
+      serialized[key] = JSON.stringify(value);
+    }
+    return serialized;
+  }
+
+  private deserializeHashData(data: Record<string, string>): Record<string, unknown> {
+    const deserialized: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(data)) {
+      try {
+        deserialized[key] = JSON.parse(value);
+      } catch (error) {
+        CustomLogger.error(`Failed to parse value for key ${key}: ${error instanceof Error ? error.message : String(error)}`);
+        deserialized[key] = value;
+      }
+    }
+    return deserialized;
+  }
+
+  private extractData(result: unknown): Record<string, unknown> {
+    if (result && typeof result === 'object') {
+      const doc = result as {
+        _doc?: Record<string, unknown>;
+        toObject?: () => Record<string, unknown>;
+      };
+      if (doc._doc) {
+        return { ...doc._doc };
+      } else if (doc.toObject && typeof doc.toObject === 'function') {
+        return doc.toObject();
+      } else {
+        return { ...(result as Record<string, unknown>) };
+      }
+    }
+    return { value: result };
+  }
+
+  private applyMongooseTransform(data: unknown): unknown {
+    if (Array.isArray(data)) {
+      return data.map((item) => this.applyMongooseTransform(item));
+    } else if (data instanceof Document) {
+      return data.toJSON();
+    } else if (data && typeof data === 'object' && 'toJSON' in data && typeof data.toJSON === 'function') {
+      return data.toJSON();
+    }
+    return data;
+  }
+}

@@ -1,7 +1,7 @@
-import { KYCController } from '@/controller/kyc.controller.js';
-import { kycSchema, rejectKycSchema } from '@/validators/kyc.validator.js';
 import { AuthMiddleware, ZodValidation } from '@cash-daddy/shared';
 import express from 'express';
+import { KYCController } from '../controller/kyc.controller.js';
+import { kycSchema, rejectKycSchema } from '../validators/kyc.validator.js';
 
 const router = (kycController: KYCController, authMiddleware: AuthMiddleware) => {
   const kycRouter = express.Router();

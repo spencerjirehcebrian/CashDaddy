@@ -2,8 +2,8 @@ export interface AuthPayload {
   userId: string;
   email: string;
   role: string;
-  status: string;
-  verificationStatus: string;
+  status?: string;
+  verificationStatus?: string;
 }
 
 export interface SessionData extends AuthPayload {

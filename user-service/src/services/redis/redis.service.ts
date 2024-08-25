@@ -1,5 +1,5 @@
-import { IRedisService } from '@/interfaces/services/redis.service.interface';
-import { redisClient } from '../../utils/redis-client';
+import { redisClient } from '../../config/redis-client.js';
+import { IRedisService } from '../../interfaces/index.js';
 
 const BLACKLIST_KEY = 'token_blacklist';
 const BLACKLIST_TTL = 24 * 60 * 60; // 24 hours in seconds

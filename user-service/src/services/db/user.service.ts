@@ -1,12 +1,9 @@
 import mongoose from 'mongoose';
-import { IUser, UserRole, UserStatus } from '../../interfaces/models/user.interface';
-import { User } from '../../models/user.model';
-import { BadRequestError, NotFoundError } from '../../types/error.types';
-import { AuthPayload } from '../../types/auth.types';
-import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator';
-import logger from '../../utils/logger';
-import { IKYC, VerificationStatus } from '../../interfaces/models/kyc.interface';
-import { IUserService } from '../../interfaces/services/user-service.interface';
+import { IUser, UserRole, UserStatus } from '../../interfaces/models/user.interface.js';
+import { User } from '../../models/user.model.js';
+import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator.js';
+import { IUserService } from '../../interfaces/services/user-service.interface.js';
+import { AuthPayload, BadRequestError, NotFoundError } from '@cash-daddy/shared';
 
 export class UserService implements IUserService {
   async register(email: string, password: string, firstName: string, lastName: string): Promise<IUser> {
@@ -59,10 +56,8 @@ export class UserService implements IUserService {
       userId: user._id.toString(),
       email: user.email,
       role: effectiveRole,
-      status: (user.status as UserStatus) || undefined,
-      verificationStatus: ((user.kyc as IKYC)?.verificationStatus as VerificationStatus) || VerificationStatus.NOT_SUBMITTED
+      status: (user.status as UserStatus) || undefined
     };
-    logger.info('User logged in', authPayload);
 
     return authPayload;
   }
@@ -73,7 +68,7 @@ export class UserService implements IUserService {
       throw new NotFoundError('Invalid user ID');
     }
 
-    const user = await User.findById(userId).populate('userProfile').populate('kyc').exec();
+    const user = await User.findById(userId).populate('userProfile').exec();
     if (!user) {
       throw new NotFoundError('User not found');
     }
@@ -96,7 +91,7 @@ export class UserService implements IUserService {
 
   @Cacheable({ keyPrefix: 'all-users' })
   async getAllUsers(): Promise<IUser[]> {
-    return User.find({}).populate('userProfile').populate('kyc').exec();
+    return User.find({}).populate('userProfile').exec();
   }
 
   @CacheInvalidate({ keyPrefix: 'user' })

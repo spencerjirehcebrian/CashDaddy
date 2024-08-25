@@ -1,4 +1,4 @@
-import { CacheManager } from '../services/cache/cache-manager.service';
+import { CacheManager } from '../services/cache/cache-manager.service.js';
 
 let cacheManager: CacheManager;
 

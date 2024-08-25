@@ -1,5 +1,5 @@
-import { AddressProofType, IdType } from '@/interfaces/models/kyc.interface.js';
 import { z } from 'zod';
+import { AddressProofType, IdType } from '../interfaces/index.js';
 
 export const kycSchema = z.object({
   idType: z.enum(Object.values(IdType) as [string, ...string[]], {

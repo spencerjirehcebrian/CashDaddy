@@ -1,16 +1,12 @@
-import { IKYC, IKYCService, VerificationStatus } from '@/interfaces/index.js';
-import { KnowYourCustomer } from '@/models/kyc.model.js';
-import { BadRequestError, Cacheable, CacheInvalidate, NotFoundError } from '@cash-daddy/shared';
+import { BadRequestError, NotFoundError } from '@cash-daddy/shared';
+import { IKYC, IKYCService, VerificationStatus } from '../../interfaces/index.js';
+import { KnowYourCustomer } from '../../models/kyc.model.js';
+import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator.js';
 
 export class KYCService implements IKYCService {
   @CacheInvalidate({ keyPrefix: 'kyc' })
   @CacheInvalidate({ keyPrefix: 'user' })
   async submitOrUpdateKYC(userId: string, kycData: Omit<IKYC, 'user' | 'verificationStatus'>): Promise<IKYC> {
-    // const userProfile = await UserProfile.findOne({ user: userId });
-    // if (!userProfile) {
-    //   throw new BadRequestError('User profile not found. Please complete your profile before submitting KYC.');
-    // }
-
     const existingKYC = await KnowYourCustomer.findOne({ user: userId });
 
     if (existingKYC) {
@@ -31,9 +27,6 @@ export class KYCService implements IKYCService {
       verificationStatus: VerificationStatus.PENDING
     });
     await newKYC.save();
-
-    // await User.findByIdAndUpdate(userId, { kyc: newKYC._id });
-
     return newKYC;
   }
 
