@@ -1,7 +1,9 @@
-import { ICacheService } from '../../interfaces/services/cache-service.interface';
-import { redisClient } from '../../utils/redis-client';
+import { redisClient } from '../../config/redis-client.js';
+import { IRedisService } from '../../interfaces/index.js';
 
-export class RedisService implements ICacheService {
+const BLACKLIST_KEY = 'token_blacklist';
+const BLACKLIST_TTL = 24 * 60 * 60; // 24 hours in seconds
+export class RedisService implements IRedisService {
   async set(key: string, value: string, expiration?: number): Promise<void> {
     await redisClient.set(key, value);
     if (expiration) {
@@ -43,5 +45,17 @@ export class RedisService implements ICacheService {
   }
   async keys(pattern: string): Promise<string[]> {
     return await redisClient.keys(pattern);
+  }
+
+  async addToBlacklist(token: string): Promise<void> {
+    const multi = redisClient.multi();
+    multi.sAdd(BLACKLIST_KEY, token);
+    multi.expire(BLACKLIST_KEY, BLACKLIST_TTL);
+    await multi.exec();
+  }
+
+  async isBlacklisted(token: string): Promise<boolean> {
+    const result = await redisClient.sIsMember(BLACKLIST_KEY, token);
+    return result;
   }
 }

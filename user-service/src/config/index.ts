@@ -10,6 +10,9 @@ class Config {
   public PORT: string | undefined;
   public KAFKA_BROKERS: string | undefined;
   public NODE_ENV: string | undefined;
+  public KAFKA_CLIENT_ID: string | undefined;
+  public KAFKA_GROUP_ID: string | undefined;
+  public KAFKA_TOPIC: string | undefined;
 
   private readonly DEFAULT_MONGO_URI = 'mongodb://localhost:27017/cashdaddy_user_dev';
 
@@ -19,6 +22,9 @@ class Config {
     this.REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
     this.PORT = process.env.PORT || '3000';
     this.KAFKA_BROKERS = process.env.KAFKA_BROKERS || 'localhost:29092';
+    this.KAFKA_CLIENT_ID = process.env.KAFKA_CLIENT_ID || 'cashdaddy-consumer';
+    this.KAFKA_GROUP_ID = process.env.KAFKA_GROUP_ID || 'cashdaddy-service-group';
+    this.KAFKA_TOPIC = process.env.KAFKA_TOPIC || 'service-messages';
     this.NODE_ENV = process.env.NODE_ENV || 'development';
     this.JWT_EXPIRATION = process.env.JWT_EXPIRATION || '1h';
   }

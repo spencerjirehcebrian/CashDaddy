@@ -1,19 +1,16 @@
 import express from 'express';
-import userRoutes from './user.routes';
-import userProfileRoutes from './user-profile.routes';
-import kycRoutes from './kyc.routes';
-import { createRateLimiter } from '../middlewares/rate-limit.middleware';
-import { KYCController } from '../controller/kyc.controller';
-import { UserController } from '../controller/user.controller';
-import { UserProfileController } from '../controller/user-profile.controller';
+import userRoutes from './user.routes.js';
+import userProfileRoutes from './user-profile.routes.js';
+import { UserController } from '../controller/user.controller.js';
+import { UserProfileController } from '../controller/user-profile.controller.js';
+import { AuthMiddleware, CreateRateLimiter } from '@cash-daddy/shared';
 
-const router = (userController: UserController, userProfileController: UserProfileController, kycController: KYCController) => {
+const router = (userController: UserController, userProfileController: UserProfileController, authMiddleware: AuthMiddleware) => {
   const apiRouter = express.Router();
-  apiRouter.use(createRateLimiter());
+  apiRouter.use(CreateRateLimiter());
 
-  apiRouter.use('/users', userRoutes(userController));
-  apiRouter.use('/profiles', userProfileRoutes(userProfileController));
-  apiRouter.use('/kyc', kycRoutes(kycController));
+  apiRouter.use('/users', userRoutes(userController, authMiddleware));
+  apiRouter.use('/profiles', userProfileRoutes(userProfileController, authMiddleware));
 
   return apiRouter;
 };

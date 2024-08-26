@@ -1,11 +1,9 @@
-// services/db/user-profile.service.ts
-
-import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator';
-import { IUserProfile } from '../../interfaces/models/user-profile.interface';
-import { UserProfile } from '../../models/user-profile.model';
-import { User } from '../../models/user.model';
-import { BadRequestError, NotFoundError } from '../../types/error.types';
-import { IUserProfileService } from '../../interfaces/services/user-profile-service.interface';
+import { IUserProfile } from '../../interfaces/models/user-profile.interface.js';
+import { UserProfile } from '../../models/user-profile.model.js';
+import { User } from '../../models/user.model.js';
+import { IUserProfileService } from '../../interfaces/services/user-profile-service.interface.js';
+import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator.js';
+import { BadRequestError, NotFoundError } from '@cash-daddy/shared';
 
 export class UserProfileService implements IUserProfileService {
   @CacheInvalidate({ keyPrefix: 'user-profile' })
