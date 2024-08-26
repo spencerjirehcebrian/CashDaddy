@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 
-export interface IWallet {
+export interface IWallet extends Document {
   user: Types.ObjectId; // Reference to the User model
   balance: number; // Balance in the wallet, defaults to 0
   currency: string; // Currency type, defaults to 'USD'

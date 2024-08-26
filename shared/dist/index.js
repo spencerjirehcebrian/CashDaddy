@@ -1,6 +1,7 @@
 // Interfaces
 export { UserRole, UserStatus, } from "./interfaces/models/user.interface.js";
 export { VerificationStatus, IdType, AddressProofType, } from "./interfaces/models/kyc.interface.js";
+export { TransactionType, TransactionStatus, } from "./interfaces/models/transactions.inteface.js";
 // Middlewares
 export { AuthMiddleware } from "./middlewares/auth.middleware.js";
 export { ErrorHandler } from "./middlewares/error.middleware.js";

@@ -12,6 +12,13 @@ export {
   IdType,
   AddressProofType,
 } from "./interfaces/models/kyc.interface.js";
+export {
+  ITransaction,
+  TransactionType,
+  TransactionStatus,
+} from "./interfaces/models/transactions.inteface.js";
+export { IPaymentMethod } from "./interfaces/models/payment-method.interface.js";
+export { IWallet } from "./interfaces/models/wallet.interface.js";
 export { IAuthService } from "./interfaces/services/auth-service.interface.js";
 export { IRedisService } from "./interfaces/services/redis.service.interface.js";
 

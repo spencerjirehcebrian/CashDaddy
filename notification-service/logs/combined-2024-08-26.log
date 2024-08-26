@@ -1,0 +1,12 @@
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 16:34:35"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 16:35:13"}
+{"level":"info","message":"Using configured SMTP server for emails","timestamp":"2024-08-26 16:35:13"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 16:37:07"}
+{"level":"info","message":"Using configured SMTP server for emails","timestamp":"2024-08-26 16:37:07"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 16:37:07"}
+{"level":"info","message":"Email templates loaded successfully","timestamp":"2024-08-26 16:37:07"}
+{"level":"info","message":"KYC microservice listening on port 3001","timestamp":"2024-08-26 16:37:10"}
+{"level":"info","message":"Received message:","offset":"0","partition":0,"timestamp":"2024-08-26 16:38:33","topic":"notification-events","value":"{\n\t\"action\": \"triggerNotification\",\n\t\"payload\": {\n\t}\n}"}
+{"level":"info","message":"Received notification:","timestamp":"2024-08-26 16:38:33"}
+{"level":"info","message":"Email sent to spencercebrian123@gmail.com using template verification","timestamp":"2024-08-26 16:38:33"}
+{"level":"info","message":"Verification email sent successfully to spencercebrian123@gmail.com","timestamp":"2024-08-26 16:38:33"}

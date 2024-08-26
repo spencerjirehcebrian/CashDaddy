@@ -7,7 +7,7 @@ const JWT_SECRET = config.JWT_SECRET!;
 
 export class AuthService implements IAuthService {
   generateToken(payload: AuthPayload): string {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: '6h' });
   }
   verifyToken(token: string): AuthPayload {
     try {

@@ -1,0 +1,270 @@
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 12:51:36"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 12:51:36"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 12:51:36"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 12:51:36"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 12:51:36"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 12:51:39"}
+{"level":"info","message":"Response: 200 Balance retrieved successfully","timestamp":"2024-08-26 12:52:21"}
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 12:52:38"}
+{"level":"info","message":"Response: 400 Deposit failed: Payment method not found or does not belong to this user","timestamp":"2024-08-26 12:52:38"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 12:54:44"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 12:54:44"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 12:54:44"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 12:54:44"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 12:54:44"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 12:55:04"}
+{"level":"info","message":"Received message:","offset":"6","partition":0,"timestamp":"2024-08-26 12:55:09","topic":"wallet-events","value":"{\"action\":\"returnData\",\"payload\":{}}"}
+{"level":"warn","message":"Received user data, but no pending KYC submission","timestamp":"2024-08-26 12:55:09"}
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 12:55:19"}
+{"level":"info","message":"Response: 400 Deposit failed: Payment method not found or does not belong to this user","timestamp":"2024-08-26 12:55:19"}
+{"level":"info","message":"Received message:","offset":"7","partition":0,"timestamp":"2024-08-26 12:59:33","topic":"wallet-events","value":"{\"action\":\"returnData\",\"payload\":{}}"}
+{"level":"warn","message":"Received user data, but no pending KYC submission","timestamp":"2024-08-26 12:59:33"}
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 12:59:43"}
+{"level":"info","message":"Response: 400 Deposit failed: Payment method not found or does not belong to this user","timestamp":"2024-08-26 12:59:43"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 13:01:58"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 13:01:58"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 13:01:58"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 13:01:58"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 13:01:58"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 13:02:18"}
+{"level":"info","message":"Received message:","offset":"8","partition":0,"timestamp":"2024-08-26 13:02:20","topic":"wallet-events","value":"{\"action\":\"returnData\",\"payload\":{}}"}
+{"level":"warn","message":"Received kafka data, but no pending action or empty data","timestamp":"2024-08-26 13:02:20"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 13:03:11"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 13:03:11"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 13:03:11"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 13:03:11"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 13:03:11"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 13:03:14"}
+{"level":"info","message":"Received message:","offset":"9","partition":0,"timestamp":"2024-08-26 13:03:22","topic":"wallet-events","value":"{\"action\":\"returnPaymentMethod\",\"payload\":{}}"}
+{"level":"warn","message":"Received kafka data, but no pending action or empty data","timestamp":"2024-08-26 13:03:22"}
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 13:03:32"}
+{"level":"info","message":"Response: 400 Deposit failed: Payment method not found or does not belong to this user","timestamp":"2024-08-26 13:03:32"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 13:05:28"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 13:05:28"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 13:05:28"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 13:05:28"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 13:05:28"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 13:05:47"}
+{"level":"info","message":"Received message:","offset":"10","partition":0,"timestamp":"2024-08-26 13:07:03","topic":"wallet-events","value":"{\"action\":\"returnPaymentMethod\",\"payload\":{}}"}
+{"level":"info","message":"Received message:","offset":"11","partition":0,"timestamp":"2024-08-26 13:07:03","topic":"wallet-events","value":"{\"action\":\"returnData\",\"payload\":{}}"}
+{"level":"warn","message":"Received kafka data, but no pending action or empty data","timestamp":"2024-08-26 13:07:03"}
+{"level":"error","message":"Error in deposit:","statusCode":400,"timestamp":"2024-08-26 13:07:08"}
+{"level":"info","message":"Response: 400 Deposit failed: Deposit failed: Payment not succeeded","timestamp":"2024-08-26 13:07:08"}
+{"level":"info","message":"Received message:","offset":"12","partition":0,"timestamp":"2024-08-26 13:09:01","topic":"wallet-events","value":"{\"action\":\"returnPaymentMethod\",\"payload\":{}}"}
+{"level":"info","message":"Received message:","offset":"13","partition":0,"timestamp":"2024-08-26 13:09:01","topic":"wallet-events","value":"{\"action\":\"returnData\",\"payload\":{}}"}
+{"level":"warn","message":"Received kafka data, but no pending action or empty data","timestamp":"2024-08-26 13:09:01"}
+{"level":"error","message":"Error in deposit:","statusCode":400,"timestamp":"2024-08-26 13:09:05"}
+{"level":"info","message":"Response: 400 Deposit failed: Deposit failed: Payment not succeeded","timestamp":"2024-08-26 13:09:05"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 13:11:52"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 13:11:52"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 13:11:52"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 13:11:52"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 13:11:52"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 13:11:57"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 13:11:57"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 13:11:57"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 13:11:57"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 13:11:57"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 13:12:46"}
+{"level":"info","message":"Received message:","offset":"14","partition":0,"timestamp":"2024-08-26 13:16:50","topic":"wallet-events","value":"{\"action\":\"returnPaymentMethod\",\"payload\":{}}"}
+{"level":"info","message":"Received message:","offset":"15","partition":0,"timestamp":"2024-08-26 13:16:50","topic":"wallet-events","value":"{\"action\":\"returnData\",\"payload\":{}}"}
+{"level":"warn","message":"Received kafka data, but no pending action or empty data","timestamp":"2024-08-26 13:16:50"}
+{"level":"error","message":"Error in deposit:","statusCode":400,"timestamp":"2024-08-26 13:16:55"}
+{"level":"info","message":"Response: 400 Deposit failed: Deposit failed: Payment not succeeded","timestamp":"2024-08-26 13:16:55"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 13:19:06"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 13:19:06"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 13:19:06"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 13:19:06"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 13:19:06"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 13:19:09"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 14:01:34"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 14:01:34"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 14:01:34"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 14:01:34"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 14:01:34"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 14:01:37"}
+{"level":"info","message":"Received message:","offset":"16","partition":0,"timestamp":"2024-08-26 14:41:57","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"warn","message":"Unknown action received: getWallet","timestamp":"2024-08-26 14:41:57"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 14:43:26"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 14:43:26"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 14:43:27"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 14:43:27"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 14:43:27"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 14:43:47"}
+{"level":"info","message":"Received message:","offset":"17","partition":0,"timestamp":"2024-08-26 14:44:13","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 14:44:13"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:44:13"}
+{"level":"info","message":"Received message:","offset":"18","partition":0,"timestamp":"2024-08-26 14:46:37","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 14:46:37"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:46:37"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 14:47:35"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 14:47:35"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 14:47:35"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 14:47:35"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 14:47:35"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 14:47:57"}
+{"level":"info","message":"Received message:","offset":"19","partition":0,"timestamp":"2024-08-26 14:48:07","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 14:48:07"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:48:07"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 14:49:22"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 14:49:22"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 14:49:22"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 14:49:22"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 14:49:22"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 14:49:32"}
+{"level":"info","message":"Received message:","offset":"20","partition":0,"timestamp":"2024-08-26 14:50:29","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 14:50:29"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:50:29"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 14:51:21"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 14:51:21"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 14:51:21"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 14:51:21"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 14:51:21"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 14:51:39"}
+{"level":"info","message":"Received message:","offset":"21","partition":0,"timestamp":"2024-08-26 14:51:51","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 14:51:51"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:51:51"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 14:52:42"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 14:52:42"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 14:52:42"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 14:52:42"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 14:52:42"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 14:53:01"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 14:53:14"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 14:53:14"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 14:53:14"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 14:53:14"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 14:53:14"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 14:53:36"}
+{"level":"info","message":"Received message:","offset":"22","partition":0,"timestamp":"2024-08-26 14:53:39","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 14:53:39"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:53:39"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 14:57:03"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 14:57:03"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 14:57:03"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 14:57:03"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 14:57:03"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 14:57:24"}
+{"level":"info","message":"Received message:","offset":"23","partition":0,"timestamp":"2024-08-26 14:57:27","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 14:57:27"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:57:27"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 14:58:18"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 14:58:18"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 14:58:18"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 14:58:18"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 14:58:18"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 14:58:42"}
+{"level":"info","message":"Received message:","offset":"24","partition":0,"timestamp":"2024-08-26 14:59:05","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 14:59:05"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":970,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-25T13:37:40.905Z\"}","timestamp":"2024-08-26 14:59:05"}
+{"level":"info","message":"Received message:","offset":"25","partition":0,"timestamp":"2024-08-26 15:01:44","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:01:44"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":970,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-25T13:37:40.905Z\"}","timestamp":"2024-08-26 15:01:44"}
+{"level":"info","message":"Received message:","offset":"26","partition":0,"timestamp":"2024-08-26 15:02:07","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:02:07"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":970,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-25T13:37:40.905Z\"}","timestamp":"2024-08-26 15:02:07"}
+{"level":"info","message":"Received message:","offset":"27","partition":0,"timestamp":"2024-08-26 15:02:51","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:02:51"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":970,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-25T13:37:40.905Z\"}","timestamp":"2024-08-26 15:02:51"}
+{"level":"info","message":"Response: 200 Balance retrieved successfully","timestamp":"2024-08-26 15:03:23"}
+{"level":"info","message":"Received message:","offset":"28","partition":0,"timestamp":"2024-08-26 15:03:25","topic":"wallet-events","value":"{\"action\":\"returnWalletData\",\"payload\":{}}"}
+{"level":"info","message":"Received message:","offset":"29","partition":0,"timestamp":"2024-08-26 15:03:25","topic":"wallet-events","value":"{\"action\":\"returnWalletData\",\"payload\":{}}"}
+{"level":"error","message":"Error in deposit:","statusCode":400,"timestamp":"2024-08-26 15:03:25"}
+{"level":"info","message":"Response: 400 Deposit failed: Deposit failed: Payment not succeeded","timestamp":"2024-08-26 15:03:25"}
+{"level":"error","message":"Error in withdraw:","statusCode":400,"timestamp":"2024-08-26 15:03:37"}
+{"level":"error","message":"Error withdrawing funds:","statusCode":400,"timestamp":"2024-08-26 15:03:37"}
+{"level":"error","message":"Error: Withdrawal failed: Insufficient funds\n    at WalletService.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/services/db/wallet.service.js:200:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async descriptor.value (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/decorators/caching.decorator.js:31:28)\n    at async WalletController.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/controller/wallet.controller.js:50:28)","timestamp":"2024-08-26 15:03:37"}
+{"level":"info","message":"Response: 400 An error occurred","timestamp":"2024-08-26 15:03:37"}
+{"level":"info","message":"Response: 200 Balance retrieved successfully","timestamp":"2024-08-26 15:03:41"}
+{"level":"info","message":"Received message:","offset":"30","partition":0,"timestamp":"2024-08-26 15:03:47","topic":"wallet-events","value":"{\"action\":\"returnData\",\"payload\":{}}"}
+{"level":"warn","message":"Received kafka data, but no pending action or empty data","timestamp":"2024-08-26 15:03:47"}
+{"level":"error","message":"Error in withdraw:","statusCode":400,"timestamp":"2024-08-26 15:03:57"}
+{"level":"error","message":"Error withdrawing funds:","statusCode":400,"timestamp":"2024-08-26 15:03:57"}
+{"level":"error","message":"Error: Withdrawal failed: Payout failed\n    at WalletService.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/services/db/wallet.service.js:200:23)\n    at runNextTicks (node:internal/process/task_queues:60:5)\n    at process.processTimers (node:internal/timers:511:9)\n    at async descriptor.value (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/decorators/caching.decorator.js:31:28)\n    at async WalletController.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/controller/wallet.controller.js:50:28)","timestamp":"2024-08-26 15:03:57"}
+{"level":"info","message":"Response: 400 An error occurred","timestamp":"2024-08-26 15:03:57"}
+{"level":"info","message":"Transaction created for user 66c94fd65cb63642498b6445 with transfer amount 30 and transaction ID 66cc28fc7d4392db9aa291a4","timestamp":"2024-08-26 15:04:28"}
+{"level":"info","message":"Invalidating cache with key: wallet:66c94fd65cb63642498b6445:66c9fa17ac811a0ff3729b30:30","timestamp":"2024-08-26 15:04:28"}
+{"level":"info","message":"Response: 200 Transfer successful","timestamp":"2024-08-26 15:04:28"}
+{"level":"info","message":"Response: 200 Transaction history retrieved successfully","timestamp":"2024-08-26 15:04:31"}
+{"level":"info","message":"Connected to MongoDB: mongodb://localhost:27017/cashdaddy_user_dev","timestamp":"2024-08-26 15:12:37"}
+{"level":"info","message":"Connected to Redis: redis://localhost:6379","timestamp":"2024-08-26 15:12:37"}
+{"level":"info","message":"Connected to Kafka: localhost:29092","timestamp":"2024-08-26 15:12:37"}
+{"level":"info","message":"CacheManager initialized with CacheService.","timestamp":"2024-08-26 15:12:37"}
+{"level":"info","message":"Connected Kafka Consumer","timestamp":"2024-08-26 15:12:37"}
+{"level":"info","message":"Wallet microservice listening on port 3002","timestamp":"2024-08-26 15:12:40"}
+{"level":"info","message":"Received message:","offset":"31","partition":0,"timestamp":"2024-08-26 15:12:47","topic":"wallet-events","value":"{\"action\":\"returnWalletData\",\"payload\":{}}"}
+{"level":"info","message":"Received message:","offset":"32","partition":0,"timestamp":"2024-08-26 15:12:49","topic":"wallet-events","value":"{\"action\":\"returnWalletData\",\"payload\":{\"id\":\"pi_3Prx6b00AhGMCNqg1G5xmBiM\",\"object\":\"payment_intent\",\"amount\":100000,\"amount_capturable\":0,\"amount_details\":{\"tip\":{}},\"amount_received\":100000,\"application\":null,\"application_fee_amount\":null,\"automatic_payment_methods\":null,\"canceled_at\":null,\"cancellation_reason\":null,\"capture_method\":\"automatic_async\",\"client_secret\":\"pi_3Prx6b00AhGMCNqg1G5xmBiM_secret_hqae1muNP8Ym2mESKy8jUOdfI\",\"confirmation_method\":\"manual\",\"created\":1724656369,\"currency\":\"usd\",\"customer\":\"cus_Qj8uGWvXpd7d0p\",\"description\":null,\"invoice\":null,\"last_payment_error\":null,\"latest_charge\":\"ch_3Prx6b00AhGMCNqg1LxmJaui\",\"livemode\":false,\"metadata\":{},\"next_action\":null,\"on_behalf_of\":null,\"payment_method\":\"pm_1Prx6b00AhGMCNqgR0vhg7i2\",\"payment_method_configuration_details\":null,\"payment_method_options\":{\"card\":{\"installments\":null,\"mandate_options\":null,\"network\":null,\"request_three_d_secure\":\"automatic\"}},\"payment_method_types\":[\"card\"],\"processing\":null,\"receipt_email\":null,\"review\":null,\"setup_future_usage\":null,\"shipping\":null,\"source\":null,\"statement_descriptor\":null,\"statement_descriptor_suffix\":null,\"status\":\"succeeded\",\"transfer_data\":null,\"transfer_group\":null}}"}
+{"level":"info","message":"Transaction created for user 66c94fd65cb63642498b6445 with deposit amount 1000 and transaction ID 66cc2af19b57900b0f1ed861","timestamp":"2024-08-26 15:12:49"}
+{"level":"info","message":"Invalidating cache with key: wallet:66c94fd65cb63642498b6445:1000:pm_card_mastercard","timestamp":"2024-08-26 15:12:49"}
+{"level":"info","message":"Response: 200 Deposit successful","timestamp":"2024-08-26 15:12:49"}
+{"level":"info","message":"Received message:","offset":"33","partition":0,"timestamp":"2024-08-26 15:12:52","topic":"wallet-events","value":"{\"action\":\"returnData\",\"payload\":{}}"}
+{"level":"warn","message":"Received kafka data, but no pending action or empty data","timestamp":"2024-08-26 15:12:52"}
+{"level":"error","message":"Error in withdraw:","statusCode":400,"timestamp":"2024-08-26 15:12:57"}
+{"level":"error","message":"Error withdrawing funds:","statusCode":400,"timestamp":"2024-08-26 15:12:57"}
+{"level":"error","message":"Error: Withdrawal failed: Payout failed\n    at WalletService.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/services/db/wallet.service.js:200:23)\n    at runNextTicks (node:internal/process/task_queues:60:5)\n    at process.processTimers (node:internal/timers:511:9)\n    at async descriptor.value (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/decorators/caching.decorator.js:31:28)\n    at async WalletController.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/controller/wallet.controller.js:50:28)","timestamp":"2024-08-26 15:12:57"}
+{"level":"info","message":"Response: 400 An error occurred","timestamp":"2024-08-26 15:12:57"}
+{"level":"info","message":"Received message:","offset":"34","partition":0,"timestamp":"2024-08-26 15:16:11","topic":"wallet-events","value":"{\"action\":\"returnData\",\"payload\":{\"id\":\"po_simulated_202ba6b33c2c1697ac75a120ad6734b0\",\"status\":\"paid\",\"amount\":10000,\"currency\":\"usd\",\"arrival_date\":1724742971,\"method\":\"standard\",\"type\":\"bank_account\"}}"}
+{"level":"warn","message":"Received kafka data, but no pending action or empty data","timestamp":"2024-08-26 15:16:11"}
+{"level":"error","message":"Error in withdraw:","statusCode":400,"timestamp":"2024-08-26 15:16:20"}
+{"level":"error","message":"Error withdrawing funds:","statusCode":400,"timestamp":"2024-08-26 15:16:20"}
+{"level":"error","message":"Error: Withdrawal failed: Payout failed\n    at WalletService.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/services/db/wallet.service.js:200:23)\n    at runNextTicks (node:internal/process/task_queues:60:5)\n    at process.processTimers (node:internal/timers:511:9)\n    at async descriptor.value (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/decorators/caching.decorator.js:31:28)\n    at async WalletController.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/controller/wallet.controller.js:50:28)","timestamp":"2024-08-26 15:16:20"}
+{"level":"info","message":"Response: 400 An error occurred","timestamp":"2024-08-26 15:16:20"}
+{"level":"info","message":"Received message:","offset":"35","partition":0,"timestamp":"2024-08-26 15:17:36","topic":"wallet-events","value":"{\"action\":\"returnWalletData\",\"payload\":{\"id\":\"po_simulated_1da3c8fa774d4cac0e88eedc374082ea\",\"status\":\"paid\",\"amount\":10000,\"currency\":\"usd\",\"arrival_date\":1724743056,\"method\":\"standard\",\"type\":\"bank_account\"}}"}
+{"level":"info","message":"Transaction created for user 66c94fd65cb63642498b6445 with withdrawal amount 100 and transaction ID 66cc2c109b57900b0f1ed867","timestamp":"2024-08-26 15:17:36"}
+{"level":"info","message":"Invalidating cache with key: wallet:66c94fd65cb63642498b6445:100","timestamp":"2024-08-26 15:17:36"}
+{"level":"info","message":"Response: 200 Withdrawal successful","timestamp":"2024-08-26 15:17:36"}
+{"level":"info","message":"Received message:","offset":"36","partition":0,"timestamp":"2024-08-26 15:17:46","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:17:46"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:17:46"}
+{"level":"info","message":"Received message:","offset":"37","partition":0,"timestamp":"2024-08-26 15:19:38","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:19:38"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:19:38"}
+{"level":"info","message":"Received message:","offset":"38","partition":0,"timestamp":"2024-08-26 15:20:04","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:20:04"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:20:04"}
+{"level":"info","message":"Received message:","offset":"39","partition":0,"timestamp":"2024-08-26 15:26:43","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:26:43"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:26:43"}
+{"level":"info","message":"Received message:","offset":"40","partition":0,"timestamp":"2024-08-26 15:28:21","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:28:21"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:28:21"}
+{"level":"info","message":"Received message:","offset":"41","partition":0,"timestamp":"2024-08-26 15:31:07","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:31:07"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:31:07"}
+{"level":"info","message":"Received message:","offset":"42","partition":0,"timestamp":"2024-08-26 15:31:14","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:31:14"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:31:14"}
+{"level":"info","message":"Received message:","offset":"43","partition":0,"timestamp":"2024-08-26 15:34:00","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:34:00"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:34:00"}
+{"level":"info","message":"Received message:","offset":"44","partition":0,"timestamp":"2024-08-26 15:34:04","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:34:04"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:34:04"}
+{"level":"info","message":"Received message:","offset":"45","partition":0,"timestamp":"2024-08-26 15:34:34","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:34:34"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":1840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:17:36.407Z\"}","timestamp":"2024-08-26 15:34:34"}
+{"level":"info","message":"Received message:","offset":"46","partition":0,"timestamp":"2024-08-26 15:34:39","topic":"wallet-events","value":"{\"action\":\"returnWalletData\",\"payload\":{\"id\":\"pm_1PrxRk00AhGMCNqg97X2ihgW\",\"object\":\"payment_method\",\"allow_redisplay\":\"unspecified\",\"billing_details\":{\"address\":{\"city\":null,\"country\":null,\"line1\":null,\"line2\":null,\"postal_code\":null,\"state\":null},\"email\":null,\"name\":null,\"phone\":null},\"card\":{\"brand\":\"mastercard\",\"checks\":{\"address_line1_check\":null,\"address_postal_code_check\":null,\"cvc_check\":\"unchecked\"},\"country\":\"US\",\"display_brand\":\"mastercard\",\"exp_month\":8,\"exp_year\":2025,\"fingerprint\":\"JoGnzZNbUx27aaJu\",\"funding\":\"credit\",\"generated_from\":null,\"last4\":\"4444\",\"networks\":{\"available\":[\"mastercard\"],\"preferred\":null},\"three_d_secure_usage\":{\"supported\":true},\"wallet\":null},\"created\":1724657680,\"customer\":null,\"livemode\":false,\"metadata\":{},\"type\":\"card\"}}"}
+{"level":"info","message":"Received message:","offset":"47","partition":0,"timestamp":"2024-08-26 15:34:40","topic":"wallet-events","value":"{\"action\":\"returnWalletData\",\"payload\":{\"id\":\"pi_3PrxRl00AhGMCNqg1LK3i2J5\",\"object\":\"payment_intent\",\"amount\":100000,\"amount_capturable\":0,\"amount_details\":{\"tip\":{}},\"amount_received\":100000,\"application\":null,\"application_fee_amount\":null,\"automatic_payment_methods\":null,\"canceled_at\":null,\"cancellation_reason\":null,\"capture_method\":\"automatic_async\",\"client_secret\":\"pi_3PrxRl00AhGMCNqg1LK3i2J5_secret_7fKX3LULkHbRbMpgp5DZX9SwB\",\"confirmation_method\":\"manual\",\"created\":1724657681,\"currency\":\"usd\",\"customer\":\"cus_Qj8uGWvXpd7d0p\",\"description\":null,\"invoice\":null,\"last_payment_error\":null,\"latest_charge\":\"ch_3PrxRl00AhGMCNqg1UbBFP5i\",\"livemode\":false,\"metadata\":{},\"next_action\":null,\"on_behalf_of\":null,\"payment_method\":\"pm_1PrxRk00AhGMCNqgJHNwewPi\",\"payment_method_configuration_details\":null,\"payment_method_options\":{\"card\":{\"installments\":null,\"mandate_options\":null,\"network\":null,\"request_three_d_secure\":\"automatic\"}},\"payment_method_types\":[\"card\"],\"processing\":null,\"receipt_email\":null,\"review\":null,\"setup_future_usage\":null,\"shipping\":null,\"source\":null,\"statement_descriptor\":null,\"statement_descriptor_suffix\":null,\"status\":\"succeeded\",\"transfer_data\":null,\"transfer_group\":null}}"}
+{"level":"info","message":"Transaction created for user 66c94fd65cb63642498b6445 with deposit amount 1000 and transaction ID 66cc30109b57900b0f1ed875","timestamp":"2024-08-26 15:34:40"}
+{"level":"info","message":"Invalidating cache with key: wallet:66c94fd65cb63642498b6445:1000:pm_card_mastercard","timestamp":"2024-08-26 15:34:40"}
+{"level":"info","message":"Response: 200 Deposit successful","timestamp":"2024-08-26 15:34:40"}
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 15:35:08"}
+{"level":"info","message":"Response: 400 Deposit failed: Payment method not found or does not belong to this user","timestamp":"2024-08-26 15:35:08"}
+{"level":"info","message":"Received message:","offset":"48","partition":0,"timestamp":"2024-08-26 15:35:20","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:35:20"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":2840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:34:40.833Z\"}","timestamp":"2024-08-26 15:35:20"}
+{"level":"info","message":"Received message:","offset":"49","partition":0,"timestamp":"2024-08-26 15:35:31","topic":"wallet-events","value":"{\"action\":\"returnWalletData\",\"payload\":{\"id\":\"pm_1PrxSP00AhGMCNqgFqdQM0cm\",\"object\":\"payment_method\",\"allow_redisplay\":\"unspecified\",\"billing_details\":{\"address\":{\"city\":null,\"country\":null,\"line1\":null,\"line2\":null,\"postal_code\":null,\"state\":null},\"email\":null,\"name\":null,\"phone\":null},\"card\":{\"brand\":\"visa\",\"checks\":{\"address_line1_check\":null,\"address_postal_code_check\":null,\"cvc_check\":\"pass\"},\"country\":\"US\",\"display_brand\":\"visa\",\"exp_month\":8,\"exp_year\":2025,\"fingerprint\":\"7oOG58yzqWD6txAk\",\"funding\":\"credit\",\"generated_from\":null,\"last4\":\"4242\",\"networks\":{\"available\":[\"visa\"],\"preferred\":null},\"three_d_secure_usage\":{\"supported\":true},\"wallet\":null},\"created\":1724657721,\"customer\":\"cus_Qj8uGWvXpd7d0p\",\"livemode\":false,\"metadata\":{},\"type\":\"card\"}}"}
+{"level":"info","message":"Received message:","offset":"50","partition":0,"timestamp":"2024-08-26 15:35:32","topic":"wallet-events","value":"{\"action\":\"returnWalletData\",\"payload\":{\"id\":\"pi_3PrxSa00AhGMCNqg0e5LLQ3Q\",\"object\":\"payment_intent\",\"amount\":100000,\"amount_capturable\":0,\"amount_details\":{\"tip\":{}},\"amount_received\":100000,\"application\":null,\"application_fee_amount\":null,\"automatic_payment_methods\":null,\"canceled_at\":null,\"cancellation_reason\":null,\"capture_method\":\"automatic_async\",\"client_secret\":\"pi_3PrxSa00AhGMCNqg0e5LLQ3Q_secret_YELZpXDEl3WnOl906WzR8E2sK\",\"confirmation_method\":\"manual\",\"created\":1724657732,\"currency\":\"usd\",\"customer\":\"cus_Qj8uGWvXpd7d0p\",\"description\":null,\"invoice\":null,\"last_payment_error\":null,\"latest_charge\":\"ch_3PrxSa00AhGMCNqg0IiKS2IF\",\"livemode\":false,\"metadata\":{},\"next_action\":null,\"on_behalf_of\":null,\"payment_method\":\"pm_1PrxSP00AhGMCNqgFqdQM0cm\",\"payment_method_configuration_details\":null,\"payment_method_options\":{\"card\":{\"installments\":null,\"mandate_options\":null,\"network\":null,\"request_three_d_secure\":\"automatic\"}},\"payment_method_types\":[\"card\"],\"processing\":null,\"receipt_email\":null,\"review\":null,\"setup_future_usage\":null,\"shipping\":null,\"source\":null,\"statement_descriptor\":null,\"statement_descriptor_suffix\":null,\"status\":\"succeeded\",\"transfer_data\":null,\"transfer_group\":null}}"}
+{"level":"info","message":"Transaction created for user 66c94fd65cb63642498b6445 with deposit amount 1000 and transaction ID 66cc30449b57900b0f1ed87b","timestamp":"2024-08-26 15:35:32"}
+{"level":"info","message":"Invalidating cache with key: wallet:66c94fd65cb63642498b6445:1000:pm_1PrxSP00AhGMCNqgFqdQM0cm","timestamp":"2024-08-26 15:35:32"}
+{"level":"info","message":"Response: 200 Deposit successful","timestamp":"2024-08-26 15:35:32"}
+{"level":"info","message":"Response: 200 Transaction history retrieved successfully","timestamp":"2024-08-26 15:37:16"}
+{"level":"info","message":"Received message:","offset":"51","partition":0,"timestamp":"2024-08-26 15:41:33","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:41:33"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":3840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:35:32.362Z\"}","timestamp":"2024-08-26 15:41:33"}
+{"level":"info","message":"Received message:","offset":"52","partition":0,"timestamp":"2024-08-26 15:43:45","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:43:45"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":3840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:35:32.362Z\"}","timestamp":"2024-08-26 15:43:45"}
+{"level":"info","message":"Received message:","offset":"53","partition":0,"timestamp":"2024-08-26 15:49:28","topic":"wallet-events","value":"{\"action\":\"getWallet\",\"payload\":{\"userId\":\"66c94fd65cb63642498b6445\"}}"}
+{"level":"info","message":"Handling getWallet event for user: 66c94fd65cb63642498b6445","timestamp":"2024-08-26 15:49:28"}
+{"level":"info","message":"Returning wallet;{\"_id\":\"66cb33624864f12a5b94bacd\",\"user\":\"66c94fd65cb63642498b6445\",\"balance\":3840,\"currency\":\"USD\",\"stripeCustomerId\":\"cus_Qj8uGWvXpd7d0p\",\"createdAt\":\"2024-08-25T13:36:34.181Z\",\"updatedAt\":\"2024-08-26T07:35:32.362Z\"}","timestamp":"2024-08-26 15:49:28"}

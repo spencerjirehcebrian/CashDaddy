@@ -1,0 +1,2 @@
+{"level":"error","message":"Error loading email templates:","timestamp":"2024-08-26 16:34:35"}
+{"code":"ENOENT","errno":-2,"level":"error","message":"Error loading email templates:","path":"../templates/base-email-template.html","syscall":"open","timestamp":"2024-08-26 16:35:13"}

@@ -222,18 +222,18 @@ export class UserController {
     });
   }
   async handleGetUserWallet(userId: string): Promise<void> {
-    CustomLogger.info('Handling getUser event for user:', userId);
+    CustomLogger.info('Handling getUserWallet event for user:', userId);
     const user = await User.findById(userId).populate('userProfile').exec();
     if (!user) {
       throw new NotFoundError('User not found');
     }
 
     await this.kafkaProducer.send({
-      topic: 'kyc-events',
+      topic: 'wallet-events',
       messages: [
         {
           value: JSON.stringify({
-            action: 'returnUser',
+            action: 'returnData',
             payload: user
           })
         }
@@ -271,7 +271,7 @@ export class UserController {
       messages: [
         {
           value: JSON.stringify({
-            action: 'returnUser',
+            action: 'returnData',
             payload: user
           })
         }

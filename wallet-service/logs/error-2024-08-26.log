@@ -1,0 +1,28 @@
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 12:52:38"}
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 12:55:19"}
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 12:59:43"}
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 13:03:32"}
+{"level":"error","message":"Error in deposit:","statusCode":400,"timestamp":"2024-08-26 13:07:08"}
+{"level":"error","message":"Error in deposit:","statusCode":400,"timestamp":"2024-08-26 13:09:05"}
+{"level":"error","message":"Error in deposit:","statusCode":400,"timestamp":"2024-08-26 13:16:55"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:44:13"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:46:37"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:48:07"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:50:29"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:51:51"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:53:39"}
+{"level":"error","message":"Error processing Kafka message:","timestamp":"2024-08-26 14:57:27"}
+{"level":"error","message":"Error in deposit:","statusCode":400,"timestamp":"2024-08-26 15:03:25"}
+{"level":"error","message":"Error in withdraw:","statusCode":400,"timestamp":"2024-08-26 15:03:37"}
+{"level":"error","message":"Error withdrawing funds:","statusCode":400,"timestamp":"2024-08-26 15:03:37"}
+{"level":"error","message":"Error: Withdrawal failed: Insufficient funds\n    at WalletService.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/services/db/wallet.service.js:200:23)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async descriptor.value (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/decorators/caching.decorator.js:31:28)\n    at async WalletController.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/controller/wallet.controller.js:50:28)","timestamp":"2024-08-26 15:03:37"}
+{"level":"error","message":"Error in withdraw:","statusCode":400,"timestamp":"2024-08-26 15:03:57"}
+{"level":"error","message":"Error withdrawing funds:","statusCode":400,"timestamp":"2024-08-26 15:03:57"}
+{"level":"error","message":"Error: Withdrawal failed: Payout failed\n    at WalletService.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/services/db/wallet.service.js:200:23)\n    at runNextTicks (node:internal/process/task_queues:60:5)\n    at process.processTimers (node:internal/timers:511:9)\n    at async descriptor.value (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/decorators/caching.decorator.js:31:28)\n    at async WalletController.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/controller/wallet.controller.js:50:28)","timestamp":"2024-08-26 15:03:57"}
+{"level":"error","message":"Error in withdraw:","statusCode":400,"timestamp":"2024-08-26 15:12:57"}
+{"level":"error","message":"Error withdrawing funds:","statusCode":400,"timestamp":"2024-08-26 15:12:57"}
+{"level":"error","message":"Error: Withdrawal failed: Payout failed\n    at WalletService.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/services/db/wallet.service.js:200:23)\n    at runNextTicks (node:internal/process/task_queues:60:5)\n    at process.processTimers (node:internal/timers:511:9)\n    at async descriptor.value (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/decorators/caching.decorator.js:31:28)\n    at async WalletController.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/controller/wallet.controller.js:50:28)","timestamp":"2024-08-26 15:12:57"}
+{"level":"error","message":"Error in withdraw:","statusCode":400,"timestamp":"2024-08-26 15:16:20"}
+{"level":"error","message":"Error withdrawing funds:","statusCode":400,"timestamp":"2024-08-26 15:16:20"}
+{"level":"error","message":"Error: Withdrawal failed: Payout failed\n    at WalletService.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/services/db/wallet.service.js:200:23)\n    at runNextTicks (node:internal/process/task_queues:60:5)\n    at process.processTimers (node:internal/timers:511:9)\n    at async descriptor.value (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/decorators/caching.decorator.js:31:28)\n    at async WalletController.withdraw (file:///home/jireh/projects/stratpoint/CashDaddy/wallet-service/dist/src/controller/wallet.controller.js:50:28)","timestamp":"2024-08-26 15:16:20"}
+{"level":"error","message":"Error in deposit:","statusCode":404,"timestamp":"2024-08-26 15:35:08"}

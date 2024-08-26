@@ -20,7 +20,7 @@ const start = async () => {
         const redisService = new RedisService();
         const authService = new AuthService();
         const stripeService = new StripeService(kafkaProducer);
-        const walletService = new WalletService(stripeService);
+        const walletService = new WalletService(stripeService, kafkaProducer);
         const walletController = new WalletController(walletService);
         const app = createApp(walletController, redisService, authService);
         // Set up Kafka consumer
@@ -36,15 +36,27 @@ const start = async () => {
             try {
                 const kafkaMessage = JSON.parse(message.value?.toString() || '{}');
                 switch (kafkaMessage.action) {
-                    case 'getOwnKYC': {
-                        const userId = kafkaMessage.payload.userId;
-                        if (userId) {
-                            // await kycController.handleGetOwnKYCAction(userId);
-                            CustomLogger.warn('getOwnKYC action received without userId');
+                    case 'getWallet': {
+                        try {
+                            const userId = kafkaMessage.payload.userId;
+                            await walletService.handleGetWallet(userId);
                         }
-                        else {
-                            CustomLogger.warn('getOwnKYC action received without userId');
+                        catch (error) {
+                            if (error instanceof Error) {
+                                CustomLogger.error(`Error processing Kafka message: ${error.message}`);
+                            }
+                            else {
+                                CustomLogger.error('Error processing Kafka message: Unknown error');
+                            }
                         }
+                        break;
+                    }
+                    case 'returnData': {
+                        await stripeService.handleReturnData(kafkaMessage.payload);
+                        break;
+                    }
+                    case 'returnWalletData': {
+                        await walletService.handleReturnData(kafkaMessage.payload);
                         break;
                     }
                     default:

@@ -1,31 +1,38 @@
-import { BadRequestError, NotFoundError, CustomLogger } from '@cash-daddy/shared';
-import { IWallet, ITransaction, IWalletService, TransactionType } from '../../interfaces/index.js';
+import { BadRequestError, NotFoundError, CustomLogger, IPaymentMethod } from '@cash-daddy/shared';
+import { IWallet, ITransaction, IWalletService, TransactionType, TransactionStatus } from '../../interfaces/index.js';
 import { Wallet } from '../../models/wallet.model.js';
 import { Transaction } from '../../models/transactions.model.js';
-import crypto from 'crypto';
-import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator.js';
+// import crypto from 'crypto';
+import { CacheInvalidate } from '../../decorators/caching.decorator.js';
 import { IStripeService } from '../../interfaces/services/stripe.service.interface.js';
+import Stripe from 'stripe';
+import { Producer } from 'kafkajs';
 
-const STRIPE_TEST_PAYMENT_METHODS = new Set([
-  'pm_card_visa',
-  'pm_card_mastercard',
-  'pm_card_amex',
-  'pm_card_discover',
-  'pm_card_diners',
-  'pm_card_jcb',
-  'pm_card_unionpay',
-  'pm_card_visa_debit',
-  'pm_card_mastercard_prepaid',
-  'pm_card_threeDSecure2Required',
-  'pm_usBankAccount',
-  'pm_sepaDebit',
-  'pm_bacsDebit',
-  'pm_alipay',
-  'pm_wechat'
-]);
+// const STRIPE_TEST_PAYMENT_METHODS = new Set([
+//   'pm_card_visa',
+//   'pm_card_mastercard',
+//   'pm_card_amex',
+//   'pm_card_discover',
+//   'pm_card_diners',
+//   'pm_card_jcb',
+//   'pm_card_unionpay',
+//   'pm_card_visa_debit',
+//   'pm_card_mastercard_prepaid',
+//   'pm_card_threeDSecure2Required',
+//   'pm_usBankAccount',
+//   'pm_sepaDebit',
+//   'pm_bacsDebit',
+//   'pm_alipay',
+//   'pm_wechat'
+// ]);
 
 export class WalletService implements IWalletService {
-  constructor(private stripeService: IStripeService) {}
+  private kafkaDataPromiseResolve: ((value: unknown) => void) | null = null;
+
+  constructor(
+    private stripeService: IStripeService,
+    private kafkaProducer: Producer
+  ) {}
 
   @CacheInvalidate({ keyPrefix: 'wallet' })
   @CacheInvalidate({ keyPrefix: 'user' })
@@ -60,11 +67,20 @@ export class WalletService implements IWalletService {
     } catch (error: unknown) {
       CustomLogger.error('Error in createWallet:', error);
       if (error instanceof Error) {
-        throw new BadRequestError(`Failed to create wallet: ${error.message}`);
+        throw new BadRequestError(`${error.message}`);
       } else {
         throw new BadRequestError('Failed to create wallet: Unknown error');
       }
     }
+  }
+
+  // @Cacheable({ keyPrefix: 'wallet' })
+  async getBalance(userId: string): Promise<{ balance: number }> {
+    const wallet = await Wallet.findOne({ user: userId });
+    if (!wallet) {
+      throw new NotFoundError('Wallet not found');
+    }
+    return { balance: wallet.balance };
   }
 
   @CacheInvalidate({ keyPrefix: 'wallet' })
@@ -75,34 +91,67 @@ export class WalletService implements IWalletService {
         throw new NotFoundError('Wallet not found');
       }
 
-      //   const paymentMethod = await PaymentMethod.findOne({
-      //     user: userId,
-      //     stripePaymentMethodId: paymentMethodId
-      //   });
+      this.kafkaProducer.send({
+        topic: 'payment-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'getPaymentMethod',
+              payload: { userId, paymentMethodId }
+            })
+          }
+        ]
+      });
 
-      //   if (!paymentMethod) {
-      //     throw new NotFoundError('Payment method not found or does not belong to this user');
-      //   }
+      const paymentMethodData: IPaymentMethod | null = await new Promise((resolve) => {
+        this.kafkaDataPromiseResolve = resolve as (value: unknown) => void;
+        setTimeout(() => {
+          if (this.kafkaDataPromiseResolve) {
+            this.kafkaDataPromiseResolve(null);
+            this.kafkaDataPromiseResolve = null;
+          }
+        }, 5000);
+      });
 
-      let paymentIntent;
-      if (STRIPE_TEST_PAYMENT_METHODS.has(paymentMethodId)) {
-        paymentIntent = {
-          id: `pi_simulated_${crypto.randomBytes(16).toString('hex')}`,
-          status: 'succeeded',
-          amount: amount * 100
-        };
-        CustomLogger.info(`Simulated payment intent for test payment method: ${JSON.stringify(paymentIntent)}`);
-      } else {
-        paymentIntent = await this.stripeService.createPaymentIntent(amount * 100, 'usd', wallet.stripeCustomerId, paymentMethodId);
-
-        paymentIntent = await this.stripeService.confirmPaymentIntent(paymentIntent.id, paymentMethodId);
+      if (!paymentMethodData) {
+        throw new NotFoundError('Payment method not found or does not belong to this user');
       }
 
-      if (paymentIntent.status === 'succeeded') {
+      // if (STRIPE_TEST_PAYMENT_METHODS.has(paymentMethodId)) {
+      //   paymentIntent = {
+      //     id: `pi_simulated_${crypto.randomBytes(16).toString('hex')}`,
+      //     status: 'succeeded',
+      //     amount: amount * 100
+      //   } as Stripe.PaymentIntent;
+      //   CustomLogger.info(`Simulated payment intent for test payment method: ${JSON.stringify(paymentIntent)}`);
+      // } else {
+
+      await this.kafkaProducer.send({
+        topic: 'payment-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'triggerPaymentIntentAuto',
+              payload: { amount: amount * 100, currency: 'usd', customerId: wallet.stripeCustomerId, paymentMethodId }
+            })
+          }
+        ]
+      });
+
+      const paymentIntent: Stripe.PaymentIntent | null = await new Promise((resolve) => {
+        this.kafkaDataPromiseResolve = resolve as (value: unknown) => void;
+        setTimeout(() => {
+          if (this.kafkaDataPromiseResolve) {
+            this.kafkaDataPromiseResolve(null);
+            this.kafkaDataPromiseResolve = null;
+          }
+        }, 10000);
+      });
+
+      if (paymentIntent?.status === 'succeeded') {
         const depositAmount = paymentIntent.amount / 100;
         wallet.balance += depositAmount;
         await wallet.save();
-
         const transaction = await this.createTransaction(
           TransactionType.DEPOSIT,
           depositAmount,
@@ -110,18 +159,15 @@ export class WalletService implements IWalletService {
           wallet._id.toString(),
           paymentIntent.id
         );
-
-        // await this.notificationService.notifyDeposit(wallet.user, depositAmount, transaction._id);
         CustomLogger.info(
           `Transaction created for user ${wallet.user} with deposit amount ${depositAmount} and transaction ID ${transaction._id}`
         );
-
         return {
           balance: wallet.balance,
           transactionId: paymentIntent.id
         };
       } else {
-        throw new BadRequestError('Deposit failed');
+        throw new BadRequestError('Deposit failed: Payment not succeeded');
       }
     } catch (error: unknown) {
       CustomLogger.error('Error in deposit:', error);
@@ -131,15 +177,6 @@ export class WalletService implements IWalletService {
         throw new BadRequestError('Deposit failed: Unknown error');
       }
     }
-  }
-
-  @Cacheable({ keyPrefix: 'wallet' })
-  async getBalance(userId: string): Promise<{ balance: number }> {
-    const wallet = await Wallet.findOne({ user: userId });
-    if (!wallet) {
-      throw new NotFoundError('Wallet not found');
-    }
-    return { balance: wallet.balance };
   }
 
   @CacheInvalidate({ keyPrefix: 'wallet' })
@@ -154,7 +191,33 @@ export class WalletService implements IWalletService {
         throw new BadRequestError('Insufficient funds');
       }
 
-      const payout = await this.stripeService.createPayout(amount, wallet.stripeCustomerId);
+      // const payout = await this.stripeService.createPayout(amount, wallet.stripeCustomerId);
+
+      this.kafkaProducer.send({
+        topic: 'payment-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'createPayout',
+              payload: { customerId: wallet.stripeCustomerId, amount }
+            })
+          }
+        ]
+      });
+
+      const payout: Stripe.Payout | null = await new Promise((resolve) => {
+        this.kafkaDataPromiseResolve = resolve as (value: unknown) => void;
+        setTimeout(() => {
+          if (this.kafkaDataPromiseResolve) {
+            this.kafkaDataPromiseResolve(null);
+            this.kafkaDataPromiseResolve = null;
+          }
+        }, 10000);
+      });
+
+      if (!payout) {
+        throw new BadRequestError('Payout failed');
+      }
 
       wallet.balance -= amount;
       await wallet.save();
@@ -219,7 +282,7 @@ export class WalletService implements IWalletService {
     }
   }
 
-  @Cacheable({ keyPrefix: 'wallet' })
+  // @Cacheable({ keyPrefix: 'wallet' })
   async getTransactionHistory(userId: string): Promise<ITransaction[]> {
     const wallet = await Wallet.findOne({ user: userId });
     if (!wallet) {
@@ -239,7 +302,7 @@ export class WalletService implements IWalletService {
     fromWalletId: string | null,
     toWalletId: string | null,
     stripePaymentIntentId: string | null = null,
-    status: string = 'completed',
+    status: string = TransactionStatus.COMPLETED,
     metadata: Record<string, unknown> = {}
   ): Promise<ITransaction> {
     const transaction = new Transaction({
@@ -254,5 +317,39 @@ export class WalletService implements IWalletService {
 
     await transaction.save();
     return transaction;
+  }
+
+  // Kafka Actions
+  handleReturnData(userData: unknown): void {
+    if (this.kafkaDataPromiseResolve) {
+      this.kafkaDataPromiseResolve(userData);
+      this.kafkaDataPromiseResolve = null;
+    } else {
+      CustomLogger.warn('Received kafka for wallet service, but no pending action or empty data');
+    }
+  }
+
+  async handleGetWallet(userId: string): Promise<void> {
+    try {
+      CustomLogger.info('Handling getWallet event for user:', userId);
+      const wallet = await Wallet.findOne({ user: userId });
+      if (!wallet) {
+        throw new NotFoundError('Wallet not found');
+      }
+      CustomLogger.info('Returning wallet;' + JSON.stringify(wallet));
+      this.kafkaProducer.send({
+        topic: 'payment-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'returnData',
+              payload: wallet
+            })
+          }
+        ]
+      });
+    } catch (error) {
+      CustomLogger.error('Error processing Kafka message:', error);
+    }
   }
 }
