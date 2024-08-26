@@ -1,0 +1,130 @@
+<tr>
+    <td style="padding-bottom: 20px">
+        <p style="margin: 0; font-size: 16px; color: #34495e">
+            Hello {{firstName}},
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding-bottom: 20px">
+        <p style="margin: 0; font-size: 16px; color: #34495e">
+            Your KYC (Know Your Customer) verification status has been updated
+            to: {{kycStatus}}.
+        </p>
+    </td>
+</tr>
+{{#if (eq kycStatus "approved")}}
+<tr>
+    <td style="padding-bottom: 20px">
+        <p style="margin: 0; font-size: 16px; color: #34495e">
+            Congratulations! Your KYC verification has been approved. You now
+            have full access to all E-Wallet features.
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding-bottom: 20px">
+        <table
+            role="presentation"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            style="margin: 0 auto"
+        >
+            <tr>
+                <td
+                    style="
+                        border-radius: 4px;
+                        background-color: #27ae60;
+                        text-align: center;
+                    "
+                >
+                    <a
+                        href="{{accountLink}}"
+                        style="
+                            background-color: #27ae60;
+                            border: none;
+                            color: #ffffff;
+                            padding: 12px 24px;
+                            text-decoration: none;
+                            font-size: 16px;
+                            font-weight: bold;
+                            display: inline-block;
+                        "
+                        >Access Your Account</a
+                    >
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+{{else if (eq kycStatus "rejected")}}
+<tr>
+    <td style="padding-bottom: 20px">
+        <p style="margin: 0; font-size: 16px; color: #34495e">
+            Unfortunately, your KYC verification was not approved. Please review
+            the following reason and resubmit your documents:
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding-bottom: 20px">
+        <p style="margin: 0; font-size: 16px; color: #e74c3c">
+            Reason: {{rejectionReason}}
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding-bottom: 20px">
+        <table
+            role="presentation"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            style="margin: 0 auto"
+        >
+            <tr>
+                <td
+                    style="
+                        border-radius: 4px;
+                        background-color: #e67e22;
+                        text-align: center;
+                    "
+                >
+                    <a
+                        href="{{resubmitLink}}"
+                        style="
+                            background-color: #e67e22;
+                            border: none;
+                            color: #ffffff;
+                            padding: 12px 24px;
+                            text-decoration: none;
+                            font-size: 16px;
+                            font-weight: bold;
+                            display: inline-block;
+                        "
+                        >Resubmit KYC Documents</a
+                    >
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+{{else}}
+<tr>
+    <td style="padding-bottom: 20px">
+        <p style="margin: 0; font-size: 16px; color: #34495e">
+            Your KYC verification is still in progress. We'll notify you once
+            the review is complete.
+        </p>
+    </td>
+</tr>
+{{/if}}
+<tr>
+    <td>
+        <p style="margin: 0; font-size: 14px; color: #7f8c8d">
+            If you have any questions about the KYC process, please contact our
+            support team.
+        </p>
+    </td>
+</tr>

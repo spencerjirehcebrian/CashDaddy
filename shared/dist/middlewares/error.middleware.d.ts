@@ -11,5 +11,5 @@ interface MongooseError extends Error {
         [key: string]: string;
     };
 }
-declare const errorHandler: (err: Error | CustomError | MongooseError, _req: Request, res: Response, _next: NextFunction) => Response | void;
-export default errorHandler;
+export declare const ErrorHandler: (err: Error | CustomError | MongooseError, _req: Request, res: Response, _next: NextFunction) => Response | void;
+export {};

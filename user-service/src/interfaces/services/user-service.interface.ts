@@ -1,5 +1,5 @@
-import { AuthPayload } from '../../types/auth.types';
-import { IUser } from '../models';
+import { AuthPayload } from '@cash-daddy/shared';
+import { IUser } from '../models/user.interface.js';
 
 export interface IUserService {
   register(email: string, password: string, firstName: string, lastName: string): Promise<IUser>;

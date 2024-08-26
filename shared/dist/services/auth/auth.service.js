@@ -1,15 +1,19 @@
 import jwt from "jsonwebtoken";
-import { config } from "../../config/index.js";
 import { NotAuthorizedError } from "../../types/error.types.js";
-const JWT_SECRET = config.JWT_SECRET;
 export class AuthService {
-    generateToken(payload) {
+    generateToken(payload, JWT_SECRET) {
         return jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
     }
-    verifyToken(token) {
+    verifyToken(token, JWT_SECRET) {
         try {
-            const decoded = jwt.verify(token, JWT_SECRET);
-            return decoded;
+            if (!JWT_SECRET) {
+                const decoded = jwt.verify(token, "1234");
+                return decoded;
+            }
+            else {
+                const decoded = jwt.verify(token, JWT_SECRET);
+                return decoded;
+            }
         }
         catch (error) {
             if (error instanceof jwt.TokenExpiredError) {

@@ -1,5 +1,5 @@
 import { Response } from "express";
-import { CustomLogger } from "./logger";
+import { CustomLogger } from "./logger.js";
 
 export interface StandardResponse<T> {
   success: boolean;

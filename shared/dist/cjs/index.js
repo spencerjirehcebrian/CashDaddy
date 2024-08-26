@@ -34,10 +34,10 @@ __exportStar(require("./middlewares/validation.middleware.js"), exports);
 __exportStar(require("./services/auth/auth.service.js"), exports);
 __exportStar(require("./services/cache/cache-manager.service.js"), exports);
 __exportStar(require("./services/redis/redis.service.js"), exports);
+__exportStar(require("./types/express.js"), exports);
 // Types
 __exportStar(require("./types/auth.types.js"), exports);
 __exportStar(require("./types/error.types.js"), exports);
-__exportStar(require("./types/express.js"), exports);
 // Utils
 __exportStar(require("./utils/kafka-client.js"), exports);
 var logger_js_1 = require("./utils/logger.js");

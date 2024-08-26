@@ -1,6 +1,5 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
-import { config } from "../config/index.js";
 // Define custom log levels
 const customLevels = {
     error: 0,
@@ -60,16 +59,14 @@ const logger = winston.createLogger({
     format: winston.format.combine(winston.format.timestamp({
         format: "YYYY-MM-DD HH:mm:ss",
     }), winston.format.errors({ stack: true }), winston.format.splat(), winston.format.json()),
-    defaultMeta: { service: "shared" },
+    defaultMeta: {},
     transports: [errorRotateTransport, combinedRotateTransport],
 });
-if (config.NODE_ENV !== "production") {
-    logger.add(new winston.transports.Console({
-        format: winston.format.combine(winston.format.colorize({ all: true }), winston.format.timestamp({
-            format: "YYYY-MM-DD HH:mm:ss",
-        }), consoleFormat),
-    }));
-}
+logger.add(new winston.transports.Console({
+    format: winston.format.combine(winston.format.colorize({ all: true }), winston.format.timestamp({
+        format: "YYYY-MM-DD HH:mm:ss",
+    }), consoleFormat),
+}));
 // Helper function to process log arguments
 function processLogArgs(args) {
     let message = "";
@@ -88,12 +85,11 @@ function processLogArgs(args) {
     return { message, meta };
 }
 // Extend the logger with a custom log method
-const customLogger = logger;
+export const CustomLogger = logger;
 Object.keys(customLevels).forEach((level) => {
-    customLogger[level] = (...args) => {
+    CustomLogger[level] = (...args) => {
         const { message, meta } = processLogArgs(args);
         const combinedMeta = { ...logger.defaultMeta, ...meta };
         logger.log(level, message, combinedMeta);
     };
 });
-export default customLogger;

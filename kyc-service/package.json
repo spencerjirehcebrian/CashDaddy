@@ -1,12 +1,11 @@
 {
   "name": "kyc-service",
   "version": "1.0.0",
-  "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --exec node --loader ts-node/esm src/server.ts",
+    "dev": "node --loader ts-node/esm src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js",
+    "start": "node dist/src/server.js",
     "lint:check": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "prettier:check": "prettier --check src/**/*.{ts,json}",
@@ -15,15 +14,11 @@
     "test:watch": "jest --config jest.config.ts --watch",
     "test:coverage": "jest --config jest.config.ts --coverage"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@cash-daddy/shared": "^1.0.6",
+    "@cash-daddy/shared": "^1.4.6",
+    "@types/stripe": "^8.0.417",
     "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
     "connect-redis": "^7.1.1",
-    "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
@@ -36,6 +31,7 @@
     "kafkajs": "^2.2.4",
     "mongoose": "^8.5.2",
     "redis": "^4.7.0",
+    "stripe": "^16.8.0",
     "uuid": "^10.0.0",
     "winston": "^3.13.1",
     "winston-daily-rotate-file": "^5.0.0",
@@ -43,11 +39,9 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
-    "@types/joi": "^17.2.3",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^22.4.2",
     "@types/supertest": "^6.0.2",
@@ -66,8 +60,7 @@
     "prettier": "^3.3.3",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.4",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "ts-node": "^10.9.2"
   },
   "description": ""
 }

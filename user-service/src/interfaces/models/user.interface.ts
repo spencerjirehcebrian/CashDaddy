@@ -1,5 +1,5 @@
-import { IUserProfile } from './user-profile.interface';
-import { IKYC } from './kyc.interface';
+import { IKYC } from '@cash-daddy/shared';
+import { IUserProfile } from './user-profile.interface.js';
 import { Types } from 'mongoose';
 
 export enum UserRole {
@@ -20,6 +20,7 @@ export interface IUser extends Document {
   lastName: string;
   role: UserRole;
   status: UserStatus;
+  stripeCustomerId?: string;
   userProfile?: Types.ObjectId | IUserProfile;
   kyc?: Types.ObjectId | IKYC;
   isValidPassword(password: string): Promise<boolean>;

@@ -1,6 +1,13 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
-import { config } from "../config/index.js";
+
+import fs from "fs";
+import path from "path";
+
+// Get the project name from the package.json file
+const packageJsonPath = path.join(process.cwd(), "package.json");
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+const projectName = packageJson.name || "Unknown Project";
 
 // Define custom log levels
 const customLevels = {
@@ -76,23 +83,21 @@ const logger = winston.createLogger({
     winston.format.splat(),
     winston.format.json()
   ),
-  defaultMeta: { service: "shared" },
+  defaultMeta: { service: projectName },
   transports: [errorRotateTransport, combinedRotateTransport],
 });
 
-if (config.NODE_ENV !== "production") {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize({ all: true }),
-        winston.format.timestamp({
-          format: "YYYY-MM-DD HH:mm:ss",
-        }),
-        consoleFormat
-      ),
-    })
-  );
-}
+logger.add(
+  new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize({ all: true }),
+      winston.format.timestamp({
+        format: "YYYY-MM-DD HH:mm:ss",
+      }),
+      consoleFormat
+    ),
+  })
+);
 
 // Helper function to process log arguments
 function processLogArgs(args: unknown[]): { message: string; meta: object } {

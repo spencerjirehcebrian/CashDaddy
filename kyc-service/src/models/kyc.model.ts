@@ -1,5 +1,5 @@
-import { AddressProofType, IdType, IKYC, VerificationStatus } from '@/interfaces/models/kyc.interface.js';
 import mongoose, { Schema } from 'mongoose';
+import { AddressProofType, IdType, IKYC, VerificationStatus } from '../interfaces/index.js';
 
 const kycSchema = new Schema<IKYC>(
   {

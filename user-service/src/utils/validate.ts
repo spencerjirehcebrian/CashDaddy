@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserRole } from '../interfaces/models/user.interface';
+import { UserRole } from '../interfaces/models/user.interface.js';
 
 const validator = {
   validateUserRegistration(user: Record<string, unknown>) {

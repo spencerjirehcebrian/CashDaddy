@@ -1,5 +1,6 @@
 import { UserRole } from "../interfaces/models/user.interface.js";
 import { NotAuthorizedError } from "../types/error.types.js";
+import { VerificationStatus } from "../interfaces/models/kyc.interface.js";
 export class AuthMiddleware {
     constructor(authService, redisService) {
         this.authService = authService;
@@ -12,9 +13,12 @@ export class AuthMiddleware {
             roles: [UserRole.SUPER_ADMIN],
         });
         this.requireOwnership = this.createMiddleware({ checkOwnership: true });
+        this.requireVerified = this.createMiddleware({
+            checkVerificationStatus: true,
+        });
     }
     createMiddleware(options = {}) {
-        const { roles, checkOwnership = false, ownershipParamName = "userId", } = options;
+        const { roles, checkOwnership = false, ownershipParamName = "userId", checkVerificationStatus = false, } = options;
         return async (req, _res, next) => {
             try {
                 const token = req.header("Authorization")?.replace("Bearer ", "");
@@ -35,6 +39,12 @@ export class AuthMiddleware {
                         : roles(decoded.role) || decoded.role === UserRole.SUPER_ADMIN;
                     if (!hasRequiredRole) {
                         throw new NotAuthorizedError("Insufficient privileges");
+                    }
+                }
+                // Check verification status if required
+                if (checkVerificationStatus) {
+                    if (decoded.verificationStatus !== VerificationStatus.APPROVED) {
+                        throw new NotAuthorizedError("User is not verified");
                     }
                 }
                 // Attach the decoded payload to the request

@@ -1,8 +1,7 @@
 import express from 'express';
-import { createProfileSchema, updateProfileSchema } from '../validators/user-profile.validators';
-import { UserProfileController } from '../controller/user-profile.controller';
-import { zodValidation } from '../middlewares/validation.middleware';
-import { AuthMiddleware } from '../middlewares/auth.middleware';
+import { createProfileSchema, updateProfileSchema } from '../validators/user-profile.validators.js';
+import { UserProfileController } from '../controller/user-profile.controller.js';
+import { AuthMiddleware, ZodValidation } from '@cash-daddy/shared';
 
 const router = (userProfileController: UserProfileController, authMiddleware: AuthMiddleware) => {
   const profileRouter = express.Router();
@@ -11,7 +10,7 @@ const router = (userProfileController: UserProfileController, authMiddleware: Au
   profileRouter.post(
     '/',
     authMiddleware.requireOwnership,
-    zodValidation(createProfileSchema),
+    ZodValidation(createProfileSchema),
     userProfileController.createProfile.bind(userProfileController)
   );
 
@@ -20,7 +19,7 @@ const router = (userProfileController: UserProfileController, authMiddleware: Au
   profileRouter.put(
     '/me',
     authMiddleware.requireAuth,
-    zodValidation(updateProfileSchema),
+    ZodValidation(updateProfileSchema),
     userProfileController.updateOwnProfile.bind(userProfileController)
   );
 
@@ -30,7 +29,7 @@ const router = (userProfileController: UserProfileController, authMiddleware: Au
   profileRouter.put(
     '/:userId',
     authMiddleware.requireAdmin,
-    zodValidation(updateProfileSchema),
+    ZodValidation(updateProfileSchema),
     userProfileController.updateProfile.bind(userProfileController)
   );
 

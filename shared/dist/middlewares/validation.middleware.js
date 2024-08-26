@@ -1,5 +1,5 @@
 import { BadRequestError } from "../types/error.types.js";
-export const zodValidation = (schema) => {
+export const ZodValidation = (schema) => {
     return (req, _res, next) => {
         const result = schema.safeParse(req.body);
         if (!result.success) {
