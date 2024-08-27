@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { UserRole } from "../interfaces/models/user.interface.js";
+import { UserRole, UserStatus } from "../interfaces/models/user.interface.js";
 import { IAuthService } from "../interfaces/services/auth-service.interface.js";
 import { IRedisService } from "../interfaces/services/redis.service.interface.js";
 import { NotAuthorizedError } from "../types/error.types.js";
@@ -39,6 +39,11 @@ export class AuthMiddleware {
 
         const decoded = this.authService.verifyToken(token);
 
+        if (decoded.status !== UserStatus.ACTIVE) {
+          throw new NotAuthorizedError(
+            "User is not active. Please verify your email address to activate your account."
+          );
+        }
         // Check if token is blacklisted
         const isBlacklisted = await this.redisService.isBlacklisted(token);
         if (isBlacklisted) {
@@ -104,7 +109,7 @@ export class AuthMiddleware {
     roles: [UserRole.SUPER_ADMIN],
   });
   public requireOwnership = this.createMiddleware({ checkOwnership: true });
-  public requireVerified = this.createMiddleware({
+  public requireKYCVerified = this.createMiddleware({
     checkVerificationStatus: true,
   });
 }

@@ -59,6 +59,18 @@ const start = async () => {
                         await walletService.handleReturnData(kafkaMessage.payload);
                         break;
                     }
+                    case 'getWalletDataQR': {
+                        await walletService.handleReturnDataQR(kafkaMessage.payload.userId);
+                        break;
+                    }
+                    case 'getTransactionDataQR': {
+                        await walletService.handleReturnTransactionData(kafkaMessage.payload.paymentIntentId, kafkaMessage.payload.status);
+                        break;
+                    }
+                    case 'getTransactionDataQRCompleted': {
+                        await walletService.handleReturnTransactionData(kafkaMessage.payload.paymentIntentId, kafkaMessage.payload.status);
+                        break;
+                    }
                     default:
                         CustomLogger.warn('Unknown action received:', kafkaMessage.action);
                 }

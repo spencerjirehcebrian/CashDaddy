@@ -44,6 +44,17 @@ export class PaymentController {
             const paymentMethod = await this.stripeService.attachPaymentMethodToCustomer(req.body.paymentMethodId, kafkaData.stripeCustomerId);
             await this.stripeService.attachPaymentMethodToCustomer(paymentMethod.id, kafkaData.stripeCustomerId);
             await this.paymentMethodService.createPaymentMethod(kafkaData.user.toString(), paymentMethod.id, req.body.paymentMethodId);
+            this.kafkaProducer.send({
+                topic: 'notification-events',
+                messages: [
+                    {
+                        value: JSON.stringify({
+                            action: 'triggerNotificationPaymentMethodAdded',
+                            payload: { userId: kafkaData.user.toString(), type: 'card', paymentMethodId: req.body.paymentMethodId }
+                        })
+                    }
+                ]
+            });
             sendResponse(res, 200, true, 'Payment method created successfully', { paymentMethod });
         }
         catch (error) {

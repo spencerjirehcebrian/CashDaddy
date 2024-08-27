@@ -60,6 +60,11 @@ const start = async () => {
             await userController.handleGetUserWallet(userId);
             break;
           }
+          case 'getUserNotification': {
+            const userId = kafkaMessage.payload.userId as string;
+            await userController.handleGetUserNotification(userId);
+            break;
+          }
           case 'updateUserKYC': {
             const userId = kafkaMessage.payload.userId as string;
             const kycId = kafkaMessage.payload.kycId as string;

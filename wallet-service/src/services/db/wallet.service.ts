@@ -58,11 +58,21 @@ export class WalletService implements IWalletService {
         CustomLogger.info(
           `Transaction created for user ${userId} with initial balance ${initialBalance} and transaction ID ${transaction._id}`
         );
-        // await this.notificationService.notifyDeposit(userId, initialBalance, transaction._id);
       }
 
       CustomLogger.info(`Wallet created for user ${userId} with initial balance ${initialBalance}`);
 
+      this.kafkaProducer.send({
+        topic: 'notification-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'triggerNotificationWalletCreation',
+              payload: { userId, initialBalance }
+            })
+          }
+        ]
+      });
       return wallet;
     } catch (error: unknown) {
       CustomLogger.error('Error in createWallet:', error);
@@ -162,6 +172,17 @@ export class WalletService implements IWalletService {
         CustomLogger.info(
           `Transaction created for user ${wallet.user} with deposit amount ${depositAmount} and transaction ID ${transaction._id}`
         );
+        this.kafkaProducer.send({
+          topic: 'notification-events',
+          messages: [
+            {
+              value: JSON.stringify({
+                action: 'triggerNotificationDeposit',
+                payload: { userId, amount: depositAmount, transactionId: transaction._id }
+              })
+            }
+          ]
+        });
         return {
           balance: wallet.balance,
           transactionId: paymentIntent.id
@@ -224,9 +245,27 @@ export class WalletService implements IWalletService {
 
       const transaction = await this.createTransaction(TransactionType.WITHDRAW, amount, wallet._id.toString(), null, payout.id);
 
-      //   await this.notificationService.notifyWithdrawal(userId, amount, transaction._id, 'completed', 'bank_transfer');
-
       CustomLogger.info(`Transaction created for user ${userId} with withdrawal amount ${amount} and transaction ID ${transaction._id}`);
+
+      this.kafkaProducer.send({
+        topic: 'notification-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'triggerNotificationWithdrawal',
+              payload: {
+                userId,
+                amount,
+                transactionId: transaction._id,
+                withdrawalStatus: 'completed',
+                withdrawalMethod: 'bank_transfer',
+                newBalanace: wallet.balance,
+                failureReason: 'none'
+              }
+            })
+          }
+        ]
+      });
 
       return { balance: wallet.balance, payoutId: payout.id };
     } catch (error) {
@@ -266,9 +305,27 @@ export class WalletService implements IWalletService {
         toWallet._id.toString()
       );
 
-      //   await this.notificationService.notifyTransfer(fromUserId, toUserId, amount, transaction._id, fromWallet.balance, toWallet.balance);
 
       CustomLogger.info(`Transaction created for user ${fromUserId} with transfer amount ${amount} and transaction ID ${transaction._id}`);
+
+      this.kafkaProducer.send({
+        topic: 'notification-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'triggerNotificationTransfer',
+              payload: {
+                fromUserId,
+                toUserId,
+                amount,
+                transactionId: transaction._id,
+                fromBalance: fromWallet.balance,
+                toBalance: toWallet.balance
+              }
+            })
+          }
+        ]
+      });
 
       return { fromBalance: fromWallet.balance, toBalance: toWallet.balance };
     } catch (error: unknown) {
@@ -294,6 +351,14 @@ export class WalletService implements IWalletService {
     }).sort({ createdAt: -1 });
 
     return transactions;
+  }
+
+  async getTransaction(transactionId: string): Promise<ITransaction> {
+    const transaction = await Transaction.findOne({ _id: transactionId });
+    if (!transaction) {
+      throw new NotFoundError('Transaction not found');
+    }
+    return transaction;
   }
 
   private async createTransaction(
@@ -344,6 +409,80 @@ export class WalletService implements IWalletService {
             value: JSON.stringify({
               action: 'returnData',
               payload: wallet
+            })
+          }
+        ]
+      });
+    } catch (error) {
+      CustomLogger.error('Error processing Kafka message:', error);
+    }
+  }
+
+  async handleReturnDataQR(userId: string): Promise<void> {
+    try {
+      CustomLogger.info('Handling getWallet event for user:', userId);
+      const wallet = await Wallet.findOne({ user: userId });
+      if (!wallet) {
+        throw new NotFoundError('Wallet not found');
+      }
+      CustomLogger.info('Returning wallet;' + JSON.stringify(wallet));
+      this.kafkaProducer.send({
+        topic: 'payment-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'returnDataQR',
+              payload: wallet
+            })
+          }
+        ]
+      });
+    } catch (error) {
+      CustomLogger.error('Error processing Kafka message:', error);
+    }
+  }
+
+  async handleReturnTransactionData(paymentIntentId: string, status: TransactionStatus): Promise<void> {
+    try {
+      const transaction = await Transaction.findOne({ stripePaymentIntentId: paymentIntentId, status });
+      if (!transaction) {
+        throw new NotFoundError('Transaction not found');
+      }
+      CustomLogger.info('Returning transaction;' + JSON.stringify(transaction));
+
+      this.kafkaProducer.send({
+        topic: 'payment-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'returnDataQR',
+              payload: transaction
+            })
+          }
+        ]
+      });
+    } catch (error) {
+      CustomLogger.error('Error processing Kafka message:', error);
+    }
+  }
+
+  async handleReturnTransactionDataCompleted(paymentIntentId: string, status: TransactionStatus): Promise<void> {
+    try {
+      const transaction = await Transaction.findOne({ stripePaymentIntentId: paymentIntentId, status });
+      if (!transaction) {
+        throw new NotFoundError('Transaction not found');
+      }
+      transaction.status = TransactionStatus.COMPLETED;
+      await transaction.save();
+      CustomLogger.info('Returning transaction;' + JSON.stringify(transaction));
+
+      this.kafkaProducer.send({
+        topic: 'payment-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'returnData',
+              payload: transaction
             })
           }
         ]

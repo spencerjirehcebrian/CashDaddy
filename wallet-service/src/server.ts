@@ -1,4 +1,4 @@
-import { AuthService, CustomLogger } from '@cash-daddy/shared';
+import { AuthService, CustomLogger, TransactionStatus } from '@cash-daddy/shared';
 import { connectKafka, disconnectKafka, getKafkaProducer, KafkaMessage } from './config/kafka-client.js';
 import { connectConsumer, subscribeToTopic, startConsuming, disconnectConsumer } from './config/kafka-consumer.js';
 import { config } from './config/index.js';
@@ -65,6 +65,24 @@ const start = async () => {
           }
           case 'returnWalletData': {
             await walletService.handleReturnData(kafkaMessage.payload);
+            break;
+          }
+          case 'getWalletDataQR': {
+            await walletService.handleReturnDataQR(kafkaMessage.payload.userId as string);
+            break;
+          }
+          case 'getTransactionDataQR': {
+            await walletService.handleReturnTransactionData(
+              kafkaMessage.payload.paymentIntentId as string,
+              kafkaMessage.payload.status as TransactionStatus
+            );
+            break;
+          }
+          case 'getTransactionDataQRCompleted': {
+            await walletService.handleReturnTransactionData(
+              kafkaMessage.payload.paymentIntentId as string,
+              kafkaMessage.payload.status as TransactionStatus
+            );
             break;
           }
           default:

@@ -13,7 +13,19 @@ class Config {
   public KAFKA_CLIENT_ID: string | undefined;
   public KAFKA_GROUP_ID: string | undefined;
   public KAFKA_TOPIC: string | undefined;
-
+  public MINIO_URL: string | undefined;
+  public MINIO_ACCESS_KEY: string | undefined;
+  public MINIO_SECRET_KEY: string | undefined;
+  public MAILHOG_URL: string | undefined;
+  public EMAIL_HOST: string | undefined;
+  public EMAIL_PORT: string | undefined;
+  public EMAIL_USERNAME: string | undefined;
+  public EMAIL_PASSWORD: string | undefined;
+  public EMAIL_FROM: string | undefined;
+  public APP_URL_USER: string | undefined;
+  public APP_URL_KYC: string | undefined;
+  public APP_URL_WALLET: string | undefined;
+  public APP_URL_PAYMENT: string | undefined;
   private readonly DEFAULT_MONGO_URI = 'mongodb://localhost:27017/cashdaddy_user_dev';
 
   constructor() {
@@ -27,6 +39,19 @@ class Config {
     this.KAFKA_TOPIC = process.env.KAFKA_TOPIC || 'service-messages';
     this.NODE_ENV = process.env.NODE_ENV || 'development';
     this.JWT_EXPIRATION = process.env.JWT_EXPIRATION || '1h';
+    this.MINIO_URL = process.env.MINIO_URL || 'http://localhost:9000';
+    this.MINIO_ACCESS_KEY = process.env.MINIO_ACCESS_KEY || 'minioadmin';
+    this.MINIO_SECRET_KEY = process.env.MINIO_SECRET_KEY || 'minioadmin';
+    this.MAILHOG_URL = process.env.MAILHOG_URL || 'http://localhost:8025';
+    this.EMAIL_HOST = process.env.EMAIL_HOST || 'localhost';
+    this.EMAIL_PORT = process.env.EMAIL_PORT || '1025';
+    this.EMAIL_USERNAME = process.env.EMAIL_USERNAME || 'minioadmin';
+    this.EMAIL_PASSWORD = process.env.EMAIL_PASSWORD || 'minioadmin';
+    this.EMAIL_FROM = process.env.EMAIL_FROM || 'no-reply@cashdaddy.com';
+    this.APP_URL_USER = process.env.APP_URL_USER || 'http://localhost:3000';
+    this.APP_URL_KYC = process.env.APP_URL_KYC || 'http://localhost:3001';
+    this.APP_URL_WALLET = process.env.APP_URL_WALLET || 'http://localhost:3002';
+    this.APP_URL_PAYMENT = process.env.APP_URL_PAYMENT || 'http://localhost:3003';
   }
 
   public validateConfig(): void {

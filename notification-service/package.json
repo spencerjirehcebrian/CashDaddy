@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "node --loader ts-node/esm src/server.ts",
-    "build": "tsc",
+    "build": "tsc && cp -R src/templates dist/src/templates",
     "start": "node dist/src/server.js",
     "lint:check": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",

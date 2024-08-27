@@ -10,6 +10,7 @@ const router = (walletController, authMiddleware) => {
     walletRouter.post('/withdraw', authMiddleware.requireAuth, ZodValidation(withdrawSchema), walletController.withdraw.bind(walletController));
     walletRouter.post('/transfer', authMiddleware.requireAuth, ZodValidation(transferSchema), walletController.transfer.bind(walletController));
     walletRouter.get('/transactions', authMiddleware.requireAuth, walletController.getTransactionHistory.bind(walletController));
+    walletRouter.get('/transaction/:transactionId', authMiddleware.requireAuth, walletController.getTransaction.bind(walletController));
     return walletRouter;
 };
 export default router;
