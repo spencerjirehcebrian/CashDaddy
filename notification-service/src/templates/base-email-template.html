@@ -4,34 +4,84 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{subject}}</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f0f0f5;
+        margin: 0;
+        padding: 0;
+        color: #333333;
+      }
+      .email-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+      .email-header {
+        padding: 20px;
+        background-color: #5b8c85;
+        text-align: center;
+      }
+      .email-header img {
+        max-width: 120px;
+        height: auto;
+        border-radius: 50%;
+      }
+      .email-body {
+        padding: 40px 30px;
+        background-color: #ffffff;
+        color: #2c3e50;
+      }
+      .email-body h1 {
+        margin: 0;
+        font-size: 26px;
+        color: #34495e;
+        font-weight: bold;
+      }
+      .email-body p {
+        font-size: 16px;
+        color: #555555;
+        margin: 20px 0;
+      }
+      .email-footer {
+        padding: 20px 30px;
+        background-color: #34495e;
+        color: #ffffff;
+        text-align: center;
+        border-top: 1px solid #dddddd;
+      }
+      .email-footer p {
+        margin: 0;
+        font-size: 14px;
+      }
+      .email-footer a {
+        color: #f39c12;
+        text-decoration: underline;
+      }
+    </style>
   </head>
-  <body style="font-family: Arial, sans-serif; line-height: 1.6; background-color: #f4f4f4; margin: 0; padding: 0">
-    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+  <body>
+    <table role="presentation" class="email-container" cellspacing="0" cellpadding="0" border="0">
       <tr>
-        <td style="padding: 20px 0; text-align: center; background-color: #3498db">
-          <img src="https://i.postimg.cc/6qC2BqxR/yamarpikaya.png" alt="E-Wallet Logo" style="max-width: 25%; height: 25%" />
+        <td class="email-header">
+          <img src="https://i.postimg.cc/2ykYv6xN/cashdaddylogo.png" alt="E-Wallet Logo" />
         </td>
       </tr>
       <tr>
-        <td style="padding: 40px 30px; background-color: #ffffff">
-          <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
-            <tr>
-              <td style="padding-bottom: 20px; text-align: center">
-                <h1 style="margin: 0; font-size: 24px; color: #2c3e50">{{subject}}</h1>
-              </td>
-            </tr>
-            {{{content}}}
-          </table>
+        <td class="email-body">
+          <h1>{{subject}}</h1>
+          {{{content}}}
         </td>
       </tr>
       <tr>
-        <td style="padding: 20px 30px; text-align: center; background-color: #34495e; color: #ffffff">
-          <p style="margin: 0; font-size: 14px">&copy; 2024 Your E-Wallet. All rights reserved.</p>
-          <p style="margin: 10px 0 0; font-size: 14px">
-            <a href="#" style="color: #ffffff; text-decoration: underline">Privacy Policy</a>
-            |
-            <a href="#" style="color: #ffffff; text-decoration: underline">Terms of Service</a>
-          </p>
+        <td class="email-footer">
+          <p>&copy; 2024 CashDaddy. All rights reserved.</p>
+          <p><a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
         </td>
       </tr>
     </table>
