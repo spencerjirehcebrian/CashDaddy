@@ -11,5 +11,5 @@ export declare class AuthMiddleware {
     requireAdmin: (req: Request, _res: Response, next: NextFunction) => Promise<void>;
     requireSuperAdmin: (req: Request, _res: Response, next: NextFunction) => Promise<void>;
     requireOwnership: (req: Request, _res: Response, next: NextFunction) => Promise<void>;
-    requireVerified: (req: Request, _res: Response, next: NextFunction) => Promise<void>;
+    requireKYCVerified: (req: Request, _res: Response, next: NextFunction) => Promise<void>;
 }

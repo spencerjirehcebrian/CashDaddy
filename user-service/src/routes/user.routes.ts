@@ -14,6 +14,7 @@ const router = (userController: UserController, authMiddleware: AuthMiddleware) 
   // Authenticated user routes
   userRouter.get('/me', authMiddleware.requireAuth, userController.getOwnUser.bind(userController));
   userRouter.put('/me', authMiddleware.requireAuth, ZodValidation(updateUserSchema), userController.updateOwnUser.bind(userController));
+  userRouter.get('/me/verify/:userId', userController.verifyUser.bind(userController));
 
   // Admin routes
   userRouter.get('/all', authMiddleware.requireAdmin, userController.getAllUsers.bind(userController));

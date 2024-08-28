@@ -1,5 +1,11 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
+import fs from "fs";
+import path from "path";
+// Get the project name from the package.json file
+const packageJsonPath = path.join(process.cwd(), "package.json");
+const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+const projectName = packageJson.name || "Unknown Project";
 // Define custom log levels
 const customLevels = {
     error: 0,
@@ -59,7 +65,7 @@ const logger = winston.createLogger({
     format: winston.format.combine(winston.format.timestamp({
         format: "YYYY-MM-DD HH:mm:ss",
     }), winston.format.errors({ stack: true }), winston.format.splat(), winston.format.json()),
-    defaultMeta: {},
+    defaultMeta: { service: projectName },
     transports: [errorRotateTransport, combinedRotateTransport],
 });
 logger.add(new winston.transports.Console({

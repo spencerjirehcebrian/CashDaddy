@@ -3,8 +3,9 @@ import fs from 'fs/promises';
 import Handlebars from 'handlebars';
 import path from 'path';
 import { config } from '../config/index.js';
-import { CustomLogger } from '@cash-daddy/shared';
+import { CustomLogger, IUser } from '@cash-daddy/shared';
 import { fileURLToPath } from 'url';
+import { Producer } from 'kafkajs';
 
 interface EmailTemplate {
   (context: unknown): string;
@@ -25,8 +26,9 @@ export class NotificationService {
   private transporter: nodemailer.Transporter;
   private templates: EmailTemplates = {};
   private baseTemplate!: EmailTemplate;
+  private kafkaDataPromiseResolve: ((value: unknown) => void) | null = null;
 
-  constructor() {
+  constructor(private kafkaProducer: Producer) {
     this.transporter = this.createTransporter();
     this.loadEmailTemplates();
     Handlebars.registerHelper('eq', function (a: unknown, b: unknown) {
@@ -106,7 +108,7 @@ export class NotificationService {
       const html = this.baseTemplate({ content, subject, ...(context as object) });
 
       const mailOptions: nodemailer.SendMailOptions = {
-        from: 'Your E-Wallet <noreply@coderstudio.co>',
+        from: 'Your E-Wallet <noreply@cashdaddy.com>',
         to,
         subject,
         html
@@ -129,210 +131,254 @@ export class NotificationService {
     }
   }
 
-  async notifyEmailVerification(user: string, verificationLink: string): Promise<boolean> {
+  handleReturnKafkaData(kafkaData: unknown): void {
+    if (this.kafkaDataPromiseResolve) {
+      this.kafkaDataPromiseResolve(kafkaData);
+      this.kafkaDataPromiseResolve = null;
+    } else {
+      CustomLogger.warn('Received data from Kafka but no promise was found');
+    }
+  }
+
+  async getUserData(userId: string): Promise<IUser> {
     try {
-      await this.sendEmail(user, 'Verify Your E-Wallet Email', 'verification', {
-        firstName: user,
+      this.kafkaProducer.send({
+        topic: 'user-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'getUserNotification',
+              payload: {
+                userId
+              }
+            })
+          }
+        ]
+      });
+
+      const userData: IUser | null = await new Promise((resolve) => {
+        this.kafkaDataPromiseResolve = resolve as (value: unknown) => void;
+        setTimeout(() => {
+          if (this.kafkaDataPromiseResolve) {
+            this.kafkaDataPromiseResolve(null);
+            this.kafkaDataPromiseResolve = null;
+          }
+        }, 10000);
+      });
+
+      if (!userData) {
+        throw new Error('User not found');
+      }
+
+      return userData;
+    } catch (error) {
+      CustomLogger.error('Error getting user data:', error);
+      throw new Error(`Failed to get user data: ${(error as Error).message}`);
+    }
+  }
+
+  async notifyEmailVerification(userId: string, verificationLink: string): Promise<boolean> {
+    const userData: IUser = await this.getUserData(userId);
+    try {
+      await this.sendEmail(userData!.email, 'Verify Your E-Wallet Email', 'verification', {
+        firstName: userData!.firstName,
         verificationLink
       });
-      CustomLogger.info(`Verification email sent successfully to ${user}`);
+      CustomLogger.info(`Verification email sent successfully to ${userData!.email}`);
       return true;
     } catch (error) {
-      CustomLogger.error(`Error sending verification email to ${user}:`, error);
+      CustomLogger.error(`Error sending verification email to ${userData!.email}:`, error);
       return false;
     }
   }
 
-  //   async notifyLogin(user: IUser, loginTime: string, loginLocation: string): Promise<void> {
-  //     try {
-  //       await this.sendEmail(user.email, 'New Login to Your E-Wallet Account', 'login', {
-  //         firstName: user.firstName,
-  //         loginTime,
-  //         loginLocation,
-  //         secureAccountLink: `${config.APP_URL}/secure-account`
-  //       });
-  //     } catch (error) {
-  //       CustomLogger.error('Error in notifyLogin:', error);
-  //     }
-  //   }
+  async notifyLogin(userId: string): Promise<void> {
+    const userData: IUser = await this.getUserData(userId);
+    try {
+      const loginTime = new Date().toLocaleString();
+      const loginLocation = 'Unknown';
+      await this.sendEmail(userData.email, 'New Login to Your E-Wallet Account', 'login', {
+        firstName: userData.firstName,
+        loginTime,
+        loginLocation
+      });
+    } catch (error) {
+      CustomLogger.error('Error in notifyLogin:', error);
+    }
+  }
 
-  //   async notifyDeposit(userId: string, amount: number, transactionId: string): Promise<void> {
-  //     try {
-  //       const user = await User.findById(userId);
-  //       if (!user) throw new Error('User not found');
+  async notifyDeposit(userId: string, amount: number, transactionId: string): Promise<void> {
+    try {
+      const userData: IUser = await this.getUserData(userId);
+      await this.sendEmail(userData.email, 'Deposit Successful', 'deposit', {
+        firstName: userData.firstName,
+        amount,
+        transactionId,
+        transactionDate: new Date().toLocaleString(),
+        viewBalanceLink: `${config.APP_URL_WALLET}/wallet/balance`
+      });
+    } catch (error) {
+      CustomLogger.error('Error in notifyDeposit:', error);
+      throw new Error(`Failed to send deposit notification: ${(error as Error).message}`);
+    }
+  }
 
-  //       await this.sendEmail(user.email, 'Deposit Successful', 'deposit', {
-  //         firstName: user.firstName,
-  //         amount,
-  //         transactionId,
-  //         transactionDate: new Date().toLocaleString(),
-  //         viewBalanceLink: `${config.APP_URL}/wallet/balance`
-  //       });
-  //     } catch (error) {
-  //       CustomLogger.error('Error in notifyDeposit:', error);
-  //       throw new Error(`Failed to send deposit notification: ${(error as Error).message}`);
-  //     }
-  //   }
+  async notifyKYCUpdate(userId: string, kycStatus: string, rejectionReason: string | null = null): Promise<void> {
+    try {
+      const userData: IUser = await this.getUserData(userId);
+      await this.sendEmail(userData.email, 'KYC Verification Update', 'kyc-verification', {
+        firstName: userData.firstName,
+        kycStatus,
+        rejectionReason
+      });
+    } catch (error) {
+      CustomLogger.error('Error in notifyKYCUpdate:', error);
+      throw new Error(`Failed to send KYC update notification: ${(error as Error).message}`);
+    }
+  }
 
-  //   async notifyKYCUpdate(userId: string, kycStatus: string, rejectionReason: string | null = null): Promise<void> {
-  //     try {
-  //       const user = await User.findById(userId);
-  //       if (!user) throw new Error('User not found');
+  async notifyQRPayment(payerId: string, recipientId: string, amount: number, transactionId: string): Promise<void> {
+    try {
+      const payerUserData: IUser = await this.getUserData(payerId);
+      const recipientUserData: IUser = await this.getUserData(recipientId);
+      CustomLogger.info(`Notifying QR payment. Payer: ${payerId}, Recipient: ${recipientId}`);
 
-  //       await this.sendEmail(user.email, 'KYC Verification Update', 'kyc-verification', {
-  //         firstName: user.firstName,
-  //         kycStatus,
-  //         rejectionReason,
-  //         accountLink: `${config.APP_URL}/account`,
-  //         resubmitLink: `${config.APP_URL}/kyc/resubmit`
-  //       });
-  //     } catch (error) {
-  //       CustomLogger.error('Error in notifyKYCUpdate:', error);
-  //       throw new Error(`Failed to send KYC update notification: ${(error as Error).message}`);
-  //     }
-  //   }
+      const [payer, recipient] = await Promise.all([payerUserData, recipientUserData]);
 
-  //   async notifyQRPayment(payerId: string, recipientId: string, amount: number, transactionId: string, paymentStatus: string): Promise<void> {
-  //     try {
-  //       CustomLogger.info(`Notifying QR payment. Payer: ${payerId}, Recipient: ${recipientId}`);
+      if (!payer) {
+        CustomLogger.error(`Payer not found. ID: ${payerId}`);
+        throw new Error(`Payer not found. ID: ${payerId}`);
+      }
+      if (!recipient) {
+        CustomLogger.error(`Recipient not found. ID: ${recipientId}`);
+        throw new Error(`Recipient not found. ID: ${recipientId}`);
+      }
 
-  //       const [payer, recipient] = await Promise.all([User.findById(payerId), User.findById(recipientId)]);
+      await Promise.all([
+        this.sendEmail(payer.email, 'QR Payment Sent', 'qr-payment', {
+          firstName: payer.firstName,
+          paymentStatus: 'sent',
+          amount,
+          transactionId,
+          transactionDate: new Date().toLocaleString(),
+          transactionDetailsLink: `${config.APP_URL_WALLET}api/transactions/${transactionId}`
+        }),
+        this.sendEmail(recipient.email, 'QR Payment Received', 'qr-payment', {
+          firstName: recipient.firstName,
+          paymentStatus: 'received',
+          amount,
+          transactionId,
+          transactionDate: new Date().toLocaleString(),
+          transactionDetailsLink: `${config.APP_URL_WALLET}api/transactions/${transactionId}`
+        })
+      ]);
 
-  //       if (!payer) {
-  //         CustomLogger.error(`Payer not found. ID: ${payerId}`);
-  //         throw new Error(`Payer not found. ID: ${payerId}`);
-  //       }
-  //       if (!recipient) {
-  //         CustomLogger.error(`Recipient not found. ID: ${recipientId}`);
-  //         throw new Error(`Recipient not found. ID: ${recipientId}`);
-  //       }
+      CustomLogger.info(`QR payment notifications sent successfully for transaction ${transactionId}`);
+    } catch (error) {
+      CustomLogger.error('Error in notifyQRPayment:', error);
+      throw new Error(`Failed to send QR payment notifications: ${(error as Error).message}`);
+    }
+  }
 
-  //       await Promise.all([
-  //         this.sendEmail(payer.email, 'QR Payment Sent', 'qr-payment', {
-  //           firstName: payer.firstName,
-  //           paymentStatus: 'sent',
-  //           amount,
-  //           transactionId,
-  //           transactionDate: new Date().toLocaleString(),
-  //           transactionDetailsLink: `${config.APP_URL}/transactions/${transactionId}`
-  //         }),
-  //         this.sendEmail(recipient.email, 'QR Payment Received', 'qr-payment', {
-  //           firstName: recipient.firstName,
-  //           paymentStatus: 'received',
-  //           amount,
-  //           transactionId,
-  //           transactionDate: new Date().toLocaleString(),
-  //           transactionDetailsLink: `${config.APP_URL}/transactions/${transactionId}`
-  //         })
-  //       ]);
+  async notifyTransfer(
+    fromUserId: string,
+    toUserId: string,
+    amount: number,
+    transactionId: string,
+    fromBalance: number,
+    toBalance: number
+  ): Promise<void> {
+    try {
+      const fromUserData: IUser = await this.getUserData(fromUserId);
+      const toUserData: IUser = await this.getUserData(toUserId);
+      const [fromUser, toUser] = await Promise.all([fromUserData, toUserData]);
 
-  //       CustomLogger.info(`QR payment notifications sent successfully for transaction ${transactionId}`);
-  //     } catch (error) {
-  //       CustomLogger.error('Error in notifyQRPayment:', error);
-  //       throw new Error(`Failed to send QR payment notifications: ${(error as Error).message}`);
-  //     }
-  //   }
+      if (!fromUser || !toUser) throw new Error('One or both users not found');
 
-  //   async notifyTransfer(
-  //     fromUserId: string,
-  //     toUserId: string,
-  //     amount: number,
-  //     transactionId: string,
-  //     fromBalance: number,
-  //     toBalance: number
-  //   ): Promise<void> {
-  //     try {
-  //       const [fromUser, toUser] = await Promise.all([User.findById(fromUserId), User.findById(toUserId)]);
+      await Promise.all([
+        this.sendEmail(fromUser.email, 'Transfer Sent', 'transfer', {
+          firstName: fromUser.firstName,
+          transferStatus: 'sent',
+          amount,
+          otherPartyName: toUser.email,
+          transactionId,
+          transactionDate: new Date().toLocaleString(),
+          transactionDetailsLink: `${config.APP_URL_WALLET}api/transactions/${transactionId}`,
+          newBalance: fromBalance
+        }),
+        this.sendEmail(toUser.email, 'Transfer Received', 'transfer', {
+          firstName: toUser.firstName,
+          transferStatus: 'received',
+          amount,
+          otherPartyName: fromUser.email,
+          transactionId,
+          transactionDate: new Date().toLocaleString(),
+          transactionDetailsLink: `${config.APP_URL_WALLET}api/transactions/${transactionId}`,
+          newBalance: toBalance
+        })
+      ]);
+    } catch (error) {
+      CustomLogger.error('Error in notifyTransfer:', error);
+      throw new Error(`Failed to send transfer notifications: ${(error as Error).message}`);
+    }
+  }
 
-  //       if (!fromUser || !toUser) throw new Error('One or both users not found');
+  async notifyWithdrawal(
+    userId: string,
+    amount: number,
+    transactionId: string,
+    withdrawalStatus: string,
+    withdrawalMethod: string,
+    newBalance: number,
+    failureReason: string | null = null
+  ): Promise<void> {
+    try {
+      const userData: IUser = await this.getUserData(userId);
 
-  //       await Promise.all([
-  //         this.sendEmail(fromUser.email, 'Transfer Sent', 'transfer', {
-  //           firstName: fromUser.firstName,
-  //           transferStatus: 'sent',
-  //           amount,
-  //           otherPartyName: toUser.email,
-  //           transactionId,
-  //           transactionDate: new Date().toLocaleString(),
-  //           transactionDetailsLink: `${config.APP_URL}/transactions/${transactionId}`,
-  //           newBalance: fromBalance
-  //         }),
-  //         this.sendEmail(toUser.email, 'Transfer Received', 'transfer', {
-  //           firstName: toUser.firstName,
-  //           transferStatus: 'received',
-  //           amount,
-  //           otherPartyName: fromUser.email,
-  //           transactionId,
-  //           transactionDate: new Date().toLocaleString(),
-  //           transactionDetailsLink: `${config.APP_URL}/transactions/${transactionId}`,
-  //           newBalance: toBalance
-  //         })
-  //       ]);
-  //     } catch (error) {
-  //       CustomLogger.error('Error in notifyTransfer:', error);
-  //       throw new Error(`Failed to send transfer notifications: ${(error as Error).message}`);
-  //     }
-  //   }
+      await this.sendEmail(userData.email, 'Withdrawal Update', 'withdrawal', {
+        firstName: userData.firstName,
+        amount,
+        withdrawalStatus,
+        transactionId,
+        transactionDate: new Date().toLocaleString(),
+        withdrawalMethod,
+        failureReason,
+        transactionDetailsLink: `${config.APP_URL_WALLET}api/transactions/${transactionId}`,
+        newBalance
+      });
+    } catch (error) {
+      CustomLogger.error('Error in notifyWithdrawal:', error);
+      throw new Error(`Failed to send withdrawal notification: ${(error as Error).message}`);
+    }
+  }
 
-  //   async notifyWithdrawal(
-  //     userId: string,
-  //     amount: number,
-  //     transactionId: string,
-  //     withdrawalStatus: string,
-  //     withdrawalMethod: string,
-  //     failureReason: string | null = null
-  //   ): Promise<void> {
-  //     try {
-  //       const user = await User.findById(userId);
-  //       if (!user) throw new Error('User not found');
+  async notifyWalletCreation(userId: string, initialBalance: number): Promise<void> {
+    try {
+      const userData: IUser = await this.getUserData(userId);
 
-  //       await this.sendEmail(user.email, 'Withdrawal Update', 'withdrawal', {
-  //         firstName: user.firstName,
-  //         amount,
-  //         withdrawalStatus,
-  //         transactionId,
-  //         transactionDate: new Date().toLocaleString(),
-  //         withdrawalMethod,
-  //         failureReason,
-  //         transactionDetailsLink: `${config.APP_URL}/transactions/${transactionId}`,
-  //         newBalance: user.wallet.balance - amount
-  //       });
-  //     } catch (error) {
-  //       CustomLogger.error('Error in notifyWithdrawal:', error);
-  //       throw new Error(`Failed to send withdrawal notification: ${(error as Error).message}`);
-  //     }
-  //   }
+      await this.sendEmail(userData.email, 'Wallet Created Successfully', 'wallet-creation', {
+        firstName: userData.firstName,
+        initialBalance,
+        walletLink: `${config.APP_URL_WALLET}/api/wallet/balance`
+      });
+      CustomLogger.info(`Wallet creation notification sent to user ${userId}`);
+    } catch (error) {
+      CustomLogger.error('Error in notifyWalletCreation:', error);
+    }
+  }
 
-  //   async notifyWalletCreation(userId: string, initialBalance: number): Promise<void> {
-  //     try {
-  //       const user = await User.findById(userId);
-  //       if (!user) throw new Error('User not found');
-
-  //       await this.sendEmail(user.email, 'Wallet Created Successfully', 'wallet-creation', {
-  //         firstName: user.firstName,
-  //         initialBalance,
-  //         walletLink: `${config.APP_URL}/wallet`
-  //       });
-  //       CustomLogger.info(`Wallet creation notification sent to user ${userId}`);
-  //     } catch (error) {
-  //       CustomLogger.error('Error in notifyWalletCreation:', error);
-  //     }
-  //   }
-
-  //   async notifyPaymentMethodAdded(userId: string, last4: string, cardBrand: string): Promise<void> {
-  //     try {
-  //       const user = await User.findById(userId);
-  //       if (!user) throw new Error('User not found');
-
-  //       await this.sendEmail(user.email, 'New Payment Method Added', 'payment-method-added', {
-  //         firstName: user.firstName,
-  //         last4: last4,
-  //         cardBrand: cardBrand,
-  //         managePaymentMethodsLink: `${config.APP_URL}/wallet/payment-methods`
-  //       });
-  //       CustomLogger.info(`Payment method added notification sent to user ${userId}`);
-  //     } catch (error) {
-  //       CustomLogger.error('Error in notifyPaymentMethodAdded:', error);
-  //     }
-  //   }
+  async notifyPaymentMethodAdded(userId: string, type: string, paymentMethodId: string): Promise<void> {
+    try {
+      const userData: IUser = await this.getUserData(userId);
+      await this.sendEmail(userData.email, 'New Payment Method Added', 'payment-method-added', {
+        firstName: userData.firstName,
+        type,
+        paymentMethodId,
+        managePaymentMethodsLink: `${config.APP_URL_PAYMENT}/payment/payment-methods`
+      });
+      CustomLogger.info(`Payment method added notification sent to user ${userId}`);
+    } catch (error) {
+      CustomLogger.error('Error in notifyPaymentMethodAdded:', error);
+    }
+  }
 }

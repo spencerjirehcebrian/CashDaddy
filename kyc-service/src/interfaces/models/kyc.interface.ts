@@ -26,7 +26,7 @@ export interface IKYC extends Document {
   idNumber: string;
   idExpiryDate: Date;
   addressProofType: AddressProofType;
-  addressProofDocument: string; // Base64 encoded image
+  addressProofDocument: string; // url to the uploaded image
   verificationStatus: VerificationStatus;
   rejectionReason?: string;
 }

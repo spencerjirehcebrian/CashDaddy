@@ -8,4 +8,5 @@ export interface IWalletService {
   withdraw(userId: string, amount: number): Promise<{ balance: number; payoutId: string }>;
   transfer(fromUserId: string, toUserId: string, amount: number): Promise<{ fromBalance: number; toBalance: number }>;
   getTransactionHistory(userId: string): Promise<ITransaction[]>;
+  getTransaction(transactionId: string): Promise<ITransaction>;
 }

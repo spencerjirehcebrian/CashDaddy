@@ -2,11 +2,24 @@ import { BadRequestError, NotFoundError } from '@cash-daddy/shared';
 import { IKYC, IKYCService, VerificationStatus } from '../../interfaces/index.js';
 import { KnowYourCustomer } from '../../models/kyc.model.js';
 import { Cacheable, CacheInvalidate } from '../../decorators/caching.decorator.js';
+import { uploadToMinio } from '../minio/minio.service.js';
 
 export class KYCService implements IKYCService {
   @CacheInvalidate({ keyPrefix: 'kyc' })
   @CacheInvalidate({ keyPrefix: 'user' })
-  async submitOrUpdateKYC(userId: string, kycData: Omit<IKYC, 'user' | 'verificationStatus'>): Promise<IKYC> {
+  async submitOrUpdateKYC(
+    userId: string,
+    kycData: Omit<IKYC, 'user' | 'verificationStatus' | 'addressProofDocument'>,
+    addressProofFile: Express.Multer.File
+  ): Promise<IKYC> {
+    // Upload file to MinIO
+    let fileUrl: string;
+    try {
+      fileUrl = await uploadToMinio(addressProofFile);
+    } catch {
+      throw new BadRequestError('Failed to upload address proof document.');
+    }
+
     const existingKYC = await KnowYourCustomer.findOne({ user: userId });
 
     if (existingKYC) {
@@ -15,6 +28,7 @@ export class KYCService implements IKYCService {
       }
 
       Object.assign(existingKYC, kycData);
+      existingKYC.addressProofDocument = fileUrl;
       existingKYC.verificationStatus = VerificationStatus.PENDING;
       existingKYC.rejectionReason = undefined;
       await existingKYC.save();
@@ -24,6 +38,7 @@ export class KYCService implements IKYCService {
     const newKYC = new KnowYourCustomer({
       user: userId,
       ...kycData,
+      addressProofDocument: fileUrl,
       verificationStatus: VerificationStatus.PENDING
     });
     await newKYC.save();
@@ -50,16 +65,6 @@ export class KYCService implements IKYCService {
     if (kyc.verificationStatus === VerificationStatus.APPROVED) {
       throw new BadRequestError('KYC is already approved');
     }
-
-    // const userProfile = await UserProfile.findOne({ user: kyc.user });
-    // if (!userProfile) {
-    //   throw new BadRequestError('User profile not found. KYC approval requires a completed user profile.');
-    // }
-
-    // const user = await User.findById(kyc.user);
-    // if (!user) {
-    //   throw new NotFoundError('User not found');
-    // }
 
     kyc.verificationStatus = VerificationStatus.APPROVED;
     kyc.rejectionReason = undefined;

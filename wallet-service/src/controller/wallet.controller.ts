@@ -77,4 +77,15 @@ export class WalletController {
       next(error);
     }
   }
+
+  async getTransaction(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const transactionId = req.params.transactionId;
+      const result = await this.walletService.getTransaction(transactionId);
+      sendResponse(res, 200, true, 'Transaction retrieved successfully', result);
+    } catch (error) {
+      CustomLogger.error('Error getting transaction:', error);
+      next(error);
+    }
+  }
 }

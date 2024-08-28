@@ -6,6 +6,8 @@ import { User } from '../models/user.model.js';
 import { Types } from 'mongoose';
 import { IRedisService } from '../interfaces/services/redis.service.interface.js';
 import { AuthPayload, BadRequestError, CustomLogger, IKYC, NotFoundError, sendResponse, VerificationStatus } from '@cash-daddy/shared';
+import { config } from '../config/index.js';
+import { UserStatus } from '../interfaces/index.js';
 
 export class UserController {
   private kafkaDataPromiseResolve: ((value: unknown) => void) | null = null;
@@ -21,6 +23,20 @@ export class UserController {
     try {
       const { email, password, firstName, lastName } = req.body;
       const user = await this.userService.register(email, password, firstName, lastName);
+      this.kafkaProducer.send({
+        topic: 'notification-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'triggerNotificationEmailVerification',
+              payload: {
+                userId: user._id.toString(),
+                verificationLink: `${config.APP_URL_USER}/api/users/me/verify/${user._id.toString()}`
+              }
+            })
+          }
+        ]
+      });
       sendResponse(res, 201, true, 'User registered successfully', { user });
     } catch (error) {
       next(error);
@@ -35,6 +51,10 @@ export class UserController {
       const { userId, email: userEmail, role, status } = authPayload;
 
       const user = await User.findById(userId);
+
+      if (!user || user.status === UserStatus.INACTIVE) {
+        throw new NotFoundError('User not found or requires verification via email');
+      }
 
       if (user?.kyc) {
         await this.kafkaProducer.send({
@@ -74,6 +94,21 @@ export class UserController {
         };
 
         const token = this.authService.generateToken(newAuthPayload);
+
+        this.kafkaProducer.send({
+          topic: 'notification-events',
+          messages: [
+            {
+              value: JSON.stringify({
+                action: 'triggerNotificationLogin',
+                payload: {
+                  userId: user._id.toString()
+                }
+              })
+            }
+          ]
+        });
+
         sendResponse(res, 200, true, 'Login successful', { token, user: newAuthPayload });
       } else {
         const newAuthPayload = {
@@ -85,6 +120,20 @@ export class UserController {
         };
 
         const token = this.authService.generateToken(newAuthPayload);
+        this.kafkaProducer.send({
+          topic: 'notification-events',
+          messages: [
+            {
+              value: JSON.stringify({
+                action: 'triggerNotificationLogin',
+                payload: {
+                  userId
+                }
+              })
+            }
+          ]
+        });
+
         sendResponse(res, 200, true, 'Login successful', { token, user: newAuthPayload });
       }
     } catch (error) {
@@ -187,6 +236,20 @@ export class UserController {
     }
   }
 
+  async verifyUser(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const userId = req.params.userId;
+      const user = await this.userService.reactivateUser(userId);
+      sendResponse(res, 200, true, 'User verified successfully', { user });
+    } catch (error) {
+      if (error instanceof NotFoundError || error instanceof BadRequestError) {
+        sendResponse(res, 400, false, error.message);
+      } else {
+        next(error);
+      }
+    }
+  }
+
   async promoteUserToAdmin(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const userId = req.params.userId;
@@ -240,6 +303,29 @@ export class UserController {
       ]
     });
   }
+  async handleGetUserNotification(userId: string): Promise<void> {
+    CustomLogger.info('Handling getUserNotification event for user:', userId);
+
+    const user = await User.findById(userId).populate('userProfile').exec();
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+
+    await this.kafkaProducer.send({
+      topic: 'user-fetch-topic',
+      messages: [
+        {
+          value: JSON.stringify({
+            action: 'returnUser',
+            payload: user
+          })
+        }
+      ]
+    });
+
+    CustomLogger.info('User sent successfully:', user);
+  }
+
   async handleUpdateUserKYC(userId: string, kycId: string): Promise<void> {
     CustomLogger.info('Handling updateUserKYC event for user:', userId);
     const updatedUser = await this.userService.updateUser(userId, { kyc: new Types.ObjectId(kycId) });

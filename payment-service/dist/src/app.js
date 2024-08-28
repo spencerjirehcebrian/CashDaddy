@@ -4,7 +4,7 @@ import { AuthMiddleware, ErrorHandler } from '@cash-daddy/shared';
 import routes from './routes/index.js';
 import { CacheManager } from './services/cache/cache-manager.service.js';
 import { setCacheManager } from './decorators/caching.decorator.js';
-const createApp = (paymentController, redisService, authService) => {
+const createApp = (paymentController, qrPaymentController, redisService, authService) => {
     const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
@@ -19,7 +19,7 @@ const createApp = (paymentController, redisService, authService) => {
     // Create AuthMiddleware instance
     const authMiddleware = new AuthMiddleware(authService, redisService);
     // Set up routes
-    app.use('/api', routes(paymentController, authMiddleware));
+    app.use('/api', routes(paymentController, authMiddleware, qrPaymentController));
     app.use(ErrorHandler);
     return app;
 };
