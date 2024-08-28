@@ -6,8 +6,14 @@ import { RedisService } from './services/redis/redis.service.js';
 import { CacheManager } from './services/cache/cache-manager.service.js';
 import { setCacheManager } from './decorators/caching.decorator.js';
 import { PaymentController } from './controller/payment.controller.js';
+import { QRPaymentController } from './controller/qr.payment.controller.js';
 
-const createApp = (paymentController: PaymentController, redisService: RedisService, authService: AuthService) => {
+const createApp = (
+  paymentController: PaymentController,
+  qrPaymentController: QRPaymentController,
+  redisService: RedisService,
+  authService: AuthService
+) => {
   const app = express();
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -27,7 +33,7 @@ const createApp = (paymentController: PaymentController, redisService: RedisServ
   const authMiddleware = new AuthMiddleware(authService, redisService);
 
   // Set up routes
-  app.use('/api', routes(paymentController, authMiddleware));
+  app.use('/api', routes(paymentController, authMiddleware, qrPaymentController));
 
   app.use(ErrorHandler);
 

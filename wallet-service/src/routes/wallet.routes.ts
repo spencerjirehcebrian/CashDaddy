@@ -9,25 +9,35 @@ const router = (walletController: WalletController, authMiddleware: AuthMiddlewa
   // User routes
   walletRouter.post(
     '/',
-    authMiddleware.requireAuth,
+    authMiddleware.requireKYCVerified,
     ZodValidation(createWalletSchema),
     walletController.createWallet.bind(walletController)
   );
-  walletRouter.get('/balance', authMiddleware.requireAuth, walletController.getBalance.bind(walletController));
-  walletRouter.post('/deposit', authMiddleware.requireAuth, ZodValidation(depositSchema), walletController.deposit.bind(walletController));
+  walletRouter.get('/balance', authMiddleware.requireKYCVerified, walletController.getBalance.bind(walletController));
+  walletRouter.post(
+    '/deposit',
+    authMiddleware.requireKYCVerified,
+    ZodValidation(depositSchema),
+    walletController.deposit.bind(walletController)
+  );
   walletRouter.post(
     '/withdraw',
-    authMiddleware.requireAuth,
+    authMiddleware.requireKYCVerified,
     ZodValidation(withdrawSchema),
     walletController.withdraw.bind(walletController)
   );
   walletRouter.post(
     '/transfer',
-    authMiddleware.requireAuth,
+    authMiddleware.requireKYCVerified,
     ZodValidation(transferSchema),
     walletController.transfer.bind(walletController)
   );
-  walletRouter.get('/transactions', authMiddleware.requireAuth, walletController.getTransactionHistory.bind(walletController));
+  walletRouter.get('/transactions', authMiddleware.requireKYCVerified, walletController.getTransactionHistory.bind(walletController));
+  walletRouter.get(
+    '/transaction/:transactionId',
+    authMiddleware.requireKYCVerified,
+    walletController.getTransaction.bind(walletController)
+  );
 
   return walletRouter;
 };

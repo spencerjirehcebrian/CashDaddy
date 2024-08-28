@@ -1,4 +1,4 @@
-import { UserRole } from "../interfaces/models/user.interface.js";
+import { UserRole, UserStatus } from "../interfaces/models/user.interface.js";
 import { NotAuthorizedError } from "../types/error.types.js";
 import { VerificationStatus } from "../interfaces/models/kyc.interface.js";
 export class AuthMiddleware {
@@ -13,7 +13,7 @@ export class AuthMiddleware {
             roles: [UserRole.SUPER_ADMIN],
         });
         this.requireOwnership = this.createMiddleware({ checkOwnership: true });
-        this.requireVerified = this.createMiddleware({
+        this.requireKYCVerified = this.createMiddleware({
             checkVerificationStatus: true,
         });
     }
@@ -26,6 +26,9 @@ export class AuthMiddleware {
                     throw new NotAuthorizedError("Authentication required");
                 }
                 const decoded = this.authService.verifyToken(token);
+                if (decoded.status !== UserStatus.ACTIVE) {
+                    throw new NotAuthorizedError("User is not active. Please verify your email address to activate your account.");
+                }
                 // Check if token is blacklisted
                 const isBlacklisted = await this.redisService.isBlacklisted(token);
                 if (isBlacklisted) {

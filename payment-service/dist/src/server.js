@@ -9,6 +9,7 @@ import { RedisService } from './services/redis/redis.service.js';
 import { PaymentController } from './controller/payment.controller.js';
 import { StripeService } from './services/stripe/stripe.service.js';
 import { PaymentMethodService } from './services/db/payment-method.service.js';
+import { QRPaymentController } from './controller/qr.payment.controller.js';
 process.env.KAFKAJS_NO_PARTITIONER_WARNING = '1';
 config.validateConfig();
 const start = async () => {
@@ -22,7 +23,8 @@ const start = async () => {
         const stripeService = new StripeService();
         const paymentMethodService = new PaymentMethodService();
         const paymentController = new PaymentController(paymentMethodService, kafkaProducer, stripeService);
-        const app = createApp(paymentController, redisService, authService);
+        const qrPaymentController = new QRPaymentController(stripeService, kafkaProducer, paymentMethodService);
+        const app = createApp(paymentController, qrPaymentController, redisService, authService);
         // Set up Kafka consumer
         await connectConsumer();
         await subscribeToTopic('payment-events');
@@ -65,6 +67,10 @@ const start = async () => {
                     }
                     case 'returnData': {
                         paymentController.handleReturnUser(kafkaMessage.payload);
+                        break;
+                    }
+                    case 'returnDataQR': {
+                        qrPaymentController.handleReturnKafkaData(kafkaMessage.payload);
                         break;
                     }
                     default:

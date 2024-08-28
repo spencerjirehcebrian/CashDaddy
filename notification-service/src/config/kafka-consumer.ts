@@ -2,49 +2,47 @@ import { Kafka, Consumer, EachMessagePayload } from 'kafkajs';
 import { config } from './index.js';
 import { CustomLogger } from '@cash-daddy/shared';
 
-let consumer: Consumer;
+class KafkaConsumerManager {
+  private consumers: Consumer[] = [];
+  private kafka: Kafka;
 
-export const connectConsumer = async () => {
-  try {
-    const kafka = new Kafka({
+  constructor() {
+    this.kafka = new Kafka({
       clientId: 'notification-consumer',
       brokers: config.KAFKA_BROKERS ? config.KAFKA_BROKERS.split(',') : []
     });
+  }
 
-    consumer = kafka.consumer({ groupId: 'notification-group' });
+  async createConsumer(groupId: string): Promise<Consumer> {
+    const consumer = this.kafka.consumer({ groupId });
     await consumer.connect();
-    CustomLogger.info('Connected Kafka Consumer');
-
+    this.consumers.push(consumer);
+    CustomLogger.info(`Connected Kafka Consumer for group ${groupId}`);
     return consumer;
-  } catch (error) {
-    CustomLogger.error('Failed to connect Kafka Consumer:', error);
-    throw error;
   }
-};
 
-export const subscribeToTopic = async (topic: string) => {
-  await consumer.subscribe({ topic, fromBeginning: true });
-};
+  async subscribeToTopic(consumer: Consumer, topic: string) {
+    await consumer.subscribe({ topic, fromBeginning: true });
+  }
 
-export const startConsuming = async (messageHandler: (message: EachMessagePayload) => Promise<void>) => {
-  await consumer.run({
-    eachMessage: async (payload) => {
-      try {
-        await messageHandler(payload);
-      } catch (error) {
-        CustomLogger.error('Error processing message:', error);
+  async startConsuming(consumer: Consumer, messageHandler: (message: EachMessagePayload) => Promise<void>) {
+    await consumer.run({
+      eachMessage: async (payload) => {
+        try {
+          await messageHandler(payload);
+        } catch (error) {
+          CustomLogger.error('Error processing message:', error);
+        }
       }
-    }
-  });
-};
-
-export const disconnectConsumer = async () => {
-  await consumer.disconnect();
-};
-
-export const getKafkaConsumer = () => {
-  if (!consumer) {
-    throw new Error('Kafka consumer is not connected. Please call connectKafka first.');
+    });
   }
-  return consumer;
-};
+
+  async disconnectAll() {
+    for (const consumer of this.consumers) {
+      await consumer.disconnect();
+    }
+    this.consumers = [];
+  }
+}
+
+export const kafkaConsumerManager = new KafkaConsumerManager();

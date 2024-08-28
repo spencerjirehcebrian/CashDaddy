@@ -19,6 +19,7 @@ export class UserService implements IUserService {
       password,
       firstName,
       lastName,
+      status: UserStatus.INACTIVE,
       role: isFirstUser ? UserRole.ADMIN : UserRole.USER
     });
 
@@ -28,8 +29,8 @@ export class UserService implements IUserService {
 
   async login(email: string, password: string): Promise<AuthPayload> {
     const user = await User.findOne({ email });
-    if (!user || user.status === UserStatus.INACTIVE) {
-      throw new BadRequestError('Invalid credentials or inactive account');
+    if (!user) {
+      throw new BadRequestError('Account not found');
     }
 
     const isPasswordValid = await user.isValidPassword(password);

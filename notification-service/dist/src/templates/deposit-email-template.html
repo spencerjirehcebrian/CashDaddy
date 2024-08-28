@@ -1,0 +1,69 @@
+<tr>
+    <td style="padding-bottom: 20px">
+        <p style="margin: 0; font-size: 16px; color: #34495e">
+            Hello {{firstName}},
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding-bottom: 20px">
+        <p style="margin: 0; font-size: 16px; color: #34495e">
+            Great news! A deposit of ${{amount}} has been successfully added to
+            your E-Wallet.
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding-bottom: 20px">
+        <table
+            role="presentation"
+            cellspacing="0"
+            cellpadding="0"
+            border="0"
+            style="margin: 0 auto"
+        >
+            <tr>
+                <td
+                    style="
+                        border-radius: 4px;
+                        background-color: #2ecc71;
+                        text-align: center;
+                    "
+                >
+                    <a
+                        href="{{viewBalanceLink}}"
+                        style="
+                            background-color: #2ecc71;
+                            border: none;
+                            color: #ffffff;
+                            padding: 12px 24px;
+                            text-decoration: none;
+                            font-size: 16px;
+                            font-weight: bold;
+                            display: inline-block;
+                        "
+                        >View Balance</a
+                    >
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+<tr>
+    <td>
+        <p style="margin: 0; font-size: 14px; color: #7f8c8d">
+            Transaction ID: {{transactionId}}
+        </p>
+        <p style="margin: 0; font-size: 14px; color: #7f8c8d">
+            Date: {{transactionDate}}
+        </p>
+    </td>
+</tr>
+<tr>
+    <td style="padding-top: 20px">
+        <p style="margin: 0; font-size: 14px; color: #7f8c8d">
+            If you did not make this deposit or have any questions, please
+            contact our support team immediately.
+        </p>
+    </td>
+</tr>
