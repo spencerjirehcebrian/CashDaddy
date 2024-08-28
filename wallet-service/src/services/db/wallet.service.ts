@@ -305,7 +305,6 @@ export class WalletService implements IWalletService {
         toWallet._id.toString()
       );
 
-
       CustomLogger.info(`Transaction created for user ${fromUserId} with transfer amount ${amount} and transaction ID ${transaction._id}`);
 
       this.kafkaProducer.send({
@@ -444,11 +443,11 @@ export class WalletService implements IWalletService {
 
   async handleReturnTransactionData(paymentIntentId: string, status: TransactionStatus): Promise<void> {
     try {
-      const transaction = await Transaction.findOne({ stripePaymentIntentId: paymentIntentId, status });
-      if (!transaction) {
+      const transaction = await Transaction.findById(paymentIntentId);
+      if (transaction?.status !== status) {
         throw new NotFoundError('Transaction not found');
       }
-      CustomLogger.info('Returning transaction;' + JSON.stringify(transaction));
+      CustomLogger.info('Returning transaction');
 
       this.kafkaProducer.send({
         topic: 'payment-events',
@@ -462,7 +461,7 @@ export class WalletService implements IWalletService {
         ]
       });
     } catch (error) {
-      CustomLogger.error('Error processing Kafka message:', error);
+      CustomLogger.error('Error getting Kafka Data', error);
     }
   }
 
@@ -472,6 +471,7 @@ export class WalletService implements IWalletService {
       if (!transaction) {
         throw new NotFoundError('Transaction not found');
       }
+      CustomLogger.info('Returning transaction');
       transaction.status = TransactionStatus.COMPLETED;
       await transaction.save();
       CustomLogger.info('Returning transaction;' + JSON.stringify(transaction));

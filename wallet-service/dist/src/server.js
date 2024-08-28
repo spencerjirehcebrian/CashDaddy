@@ -9,6 +9,7 @@ import { RedisService } from './services/redis/redis.service.js';
 import { StripeService } from './services/stripe/stripe.service.js';
 import { WalletService } from './services/db/wallet.service.js';
 import { WalletController } from './controller/wallet.controller.js';
+import { Transaction } from './models/transactions.model.js';
 process.env.KAFKAJS_NO_PARTITIONER_WARNING = '1';
 config.validateConfig();
 const start = async () => {
@@ -64,12 +65,53 @@ const start = async () => {
                         break;
                     }
                     case 'getTransactionDataQR': {
-                        await walletService.handleReturnTransactionData(kafkaMessage.payload.paymentIntentId, kafkaMessage.payload.status);
+                        const transactionId = kafkaMessage.payload._id;
+                        const status = kafkaMessage.payload.status;
+                        CustomLogger.info(`Received transactionId: ${transactionId} and status: ${status}`);
+                        await walletService.handleReturnTransactionData(transactionId, status);
                         break;
                     }
                     case 'getTransactionDataQRCompleted': {
                         await walletService.handleReturnTransactionData(kafkaMessage.payload.paymentIntentId, kafkaMessage.payload.status);
                         break;
+                    }
+                    case 'createTransaction': {
+                        try {
+                            const { type, amount, toWallet, status } = kafkaMessage.payload;
+                            const transaction = new Transaction({
+                                type,
+                                amount,
+                                toWallet,
+                                status
+                            });
+                            await transaction.save();
+                            break;
+                        }
+                        catch (error) {
+                            if (error instanceof Error) {
+                                CustomLogger.error(`Error processing Kafka message: ${error.message}`);
+                            }
+                            else {
+                                CustomLogger.error('Error processing Kafka message: Unknown error');
+                            }
+                            break;
+                        }
+                    }
+                    case 'returnTransactionDataCompleted': {
+                        try {
+                            // const { paymentIntentId, status, fromWallet } = kafkaMessage.payload;
+                            // await Transaction.updateOne({ stripePaymentIntentId }, { fromWallet });
+                            break;
+                        }
+                        catch (error) {
+                            if (error instanceof Error) {
+                                CustomLogger.error(`Error processing Kafka message: ${error.message}`);
+                            }
+                            else {
+                                CustomLogger.error('Error processing Kafka message: Unknown error');
+                            }
+                            break;
+                        }
                     }
                     default:
                         CustomLogger.warn('Unknown action received:', kafkaMessage.action);

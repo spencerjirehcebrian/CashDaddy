@@ -29,7 +29,7 @@ export class SimulateService {
                     }
                 ]
             });
-            CustomLogger.info('Requested User data:');
+            CustomLogger.info('Requested User data');
             const userData = await new Promise((resolve) => {
                 CustomLogger.info('Waiting for user data...');
                 this.kafkaDataPromiseResolve = resolve;

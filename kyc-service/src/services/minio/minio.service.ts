@@ -1,4 +1,3 @@
-declare module 'minio';
 
 import * as fs from 'fs';
 import * as path from 'path';

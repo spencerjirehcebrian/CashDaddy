@@ -381,11 +381,11 @@ export class WalletService {
     }
     async handleReturnTransactionData(paymentIntentId, status) {
         try {
-            const transaction = await Transaction.findOne({ stripePaymentIntentId: paymentIntentId, status });
-            if (!transaction) {
+            const transaction = await Transaction.findById(paymentIntentId);
+            if (transaction?.status !== status) {
                 throw new NotFoundError('Transaction not found');
             }
-            CustomLogger.info('Returning transaction;' + JSON.stringify(transaction));
+            CustomLogger.info('Returning transaction');
             this.kafkaProducer.send({
                 topic: 'payment-events',
                 messages: [
@@ -399,7 +399,7 @@ export class WalletService {
             });
         }
         catch (error) {
-            CustomLogger.error('Error processing Kafka message:', error);
+            CustomLogger.error('Error getting Kafka Data', error);
         }
     }
     async handleReturnTransactionDataCompleted(paymentIntentId, status) {
@@ -408,6 +408,7 @@ export class WalletService {
             if (!transaction) {
                 throw new NotFoundError('Transaction not found');
             }
+            CustomLogger.info('Returning transaction');
             transaction.status = TransactionStatus.COMPLETED;
             await transaction.save();
             CustomLogger.info('Returning transaction;' + JSON.stringify(transaction));

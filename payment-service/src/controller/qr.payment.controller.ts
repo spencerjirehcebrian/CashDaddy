@@ -1,5 +1,13 @@
 import { Request, Response } from 'express';
-import { CustomLogger, ITransaction, IWallet, TransactionStatus } from '@cash-daddy/shared';
+import {
+  BadRequestError,
+  CustomLogger,
+  ITransaction,
+  IWallet,
+  TransactionStatus,
+  TransactionType,
+  VerificationStatus
+} from '@cash-daddy/shared';
 import crypto from 'crypto';
 import QRCode from 'qrcode';
 import { IStripeService } from '../interfaces/services/stripe.service.interface.js';
@@ -23,9 +31,10 @@ export class QRPaymentController {
       this.kafkaDataPromiseResolve(kafkaData);
       this.kafkaDataPromiseResolve = null;
     } else {
-      CustomLogger.warn('Received data from Kafka but no promise was found --');
+      CustomLogger.warn('Received data from Kafka but no promise was found');
     }
   }
+
   async generatePaymentQR(req: Request, res: Response): Promise<void> {
     try {
       const { amount } = req.body;
@@ -37,23 +46,24 @@ export class QRPaymentController {
         return;
       }
 
-      this.kafkaProducer.send({
-        topic: 'wallet-events',
-        messages: [
-          {
-            value: JSON.stringify({
-              action: 'getWalletDataQR',
-              payload: {
-                userId: req.user!.userId
-              }
-            })
-          }
-        ]
-      });
-
-      const kafkaData: IWallet | null = await new Promise((resolve) => {
-        CustomLogger.info('Waiting for data from Kafka...');
+      const kafkaData = new Promise<IWallet | null>((resolve) => {
         this.kafkaDataPromiseResolve = resolve as (value: unknown) => void;
+
+        this.kafkaProducer.send({
+          topic: 'wallet-events',
+          messages: [
+            {
+              value: JSON.stringify({
+                action: 'getWalletDataQR',
+                payload: { userId: req.user!.userId }
+              })
+            }
+          ]
+        });
+
+        CustomLogger.info('Data Requested from Kafka');
+
+        // Set a timeout to resolve with null if no data is received
         setTimeout(() => {
           if (this.kafkaDataPromiseResolve) {
             this.kafkaDataPromiseResolve(null);
@@ -77,16 +87,22 @@ export class QRPaymentController {
 
       const qrCodeDataURL = await QRCode.toDataURL(qrData);
 
-      // Create a pending transaction
-      //   await this.walletService.createTransaction(
-      //     'transfer',
-      //     amount,
-      //     null, // fromWallet is null for QR code generation
-      //     wallet._id,
-      //     null,
-      //     'pending',
-      //     { paymentId }
-      //   );
+      this.kafkaProducer.send({
+        topic: 'wallet-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'createTransaction',
+              payload: {
+                type: TransactionType.TRANSFER,
+                amount,
+                toWallet: userId,
+                status: TransactionStatus.PENDING
+              }
+            })
+          }
+        ]
+      });
 
       CustomLogger.info(`Generated QR code for payment: ${paymentId}`);
       res.status(200).json({ qrCodeDataURL, paymentId });
@@ -98,30 +114,32 @@ export class QRPaymentController {
 
   async initiateQRPayment(req: Request, res: Response): Promise<void> {
     try {
-      const { paymentId, payerId, paymentMethodId } = req.body;
+      const { paymentId, paymentMethodId } = req.body;
+      const payerId = req.user!.userId;
 
       if (!paymentId || !payerId || !paymentMethodId) {
-        res.status(400).json({ error: 'Missing required parameters' });
-        return;
+        throw new BadRequestError('Missing required parameters');
       }
-
-      this.kafkaProducer.send({
-        topic: 'wallet-events',
-        messages: [
-          {
-            value: JSON.stringify({
-              action: 'getTransactionDataQR',
-              payload: {
-                paymentIntentId: paymentId,
-                status: TransactionStatus.PENDING
-              }
-            })
-          }
-        ]
-      });
-
-      const transaction: ITransaction | null = await new Promise((resolve) => {
+      const transaction = await new Promise<ITransaction | null>((resolve) => {
         this.kafkaDataPromiseResolve = resolve as (value: unknown) => void;
+
+        this.kafkaProducer.send({
+          topic: 'wallet-events',
+          messages: [
+            {
+              value: JSON.stringify({
+                action: 'getTransactionDataQR',
+                payload: {
+                  _id: paymentId,
+                  status: VerificationStatus.PENDING
+                }
+              })
+            }
+          ]
+        });
+
+        CustomLogger.info('Transaction data requested from Kafka');
+
         setTimeout(() => {
           if (this.kafkaDataPromiseResolve) {
             this.kafkaDataPromiseResolve(null);
@@ -135,20 +153,20 @@ export class QRPaymentController {
         return;
       }
 
-      this.kafkaProducer.send({
-        topic: 'wallet-events',
-        messages: [
-          {
-            value: JSON.stringify({
-              action: 'returnWalletData',
-              payload: payerId
-            })
-          }
-        ]
-      });
-
-      const payerWallet: IWallet | null = await new Promise((resolve) => {
+      const payerWallet = await new Promise<IWallet | null>((resolve) => {
         this.kafkaDataPromiseResolve = resolve as (value: unknown) => void;
+        this.kafkaProducer.send({
+          topic: 'wallet-events',
+          messages: [
+            {
+              value: JSON.stringify({
+                action: 'getWalletDataQR',
+                payload: payerId
+              })
+            }
+          ]
+        });
+
         setTimeout(() => {
           if (this.kafkaDataPromiseResolve) {
             this.kafkaDataPromiseResolve(null);
@@ -158,8 +176,11 @@ export class QRPaymentController {
       });
 
       if (!payerWallet) {
-        res.status(404).json({ error: 'Payer wallet not found' });
-        return;
+        throw new BadRequestError('Payer wallet not found');
+      }
+
+      if (!transaction) {
+        throw new BadRequestError('Transaction not found');
       }
 
       if (payerWallet.balance < transaction.amount) {
@@ -190,6 +211,22 @@ export class QRPaymentController {
 
       //   transaction.stripePaymentIntentId = paymentIntent.id;
       //   await transaction.save();
+
+      this.kafkaProducer.send({
+        topic: 'wallet-events',
+        messages: [
+          {
+            value: JSON.stringify({
+              action: 'returnTransactionDataCompleted',
+              payload: {
+                fromWallet: payerWallet._id,
+                stripePaymentIntentId: transaction.stripePaymentIntentId,
+                status: TransactionStatus.PENDING
+              }
+            })
+          }
+        ]
+      });
 
       CustomLogger.info(`Initiated QR payment: ${paymentIntent.id}`);
       res.status(200).json({
@@ -246,22 +283,27 @@ export class QRPaymentController {
           return;
         }
 
-        this.kafkaProducer.send({
-          topic: 'wallet-events',
-          messages: [
-            {
-              value: JSON.stringify({
-                action: 'getWalletDataQR',
-                payload: { userId: transaction.toWallet }
-              })
-            }
-          ]
-        });
-
-        const recipientWallet: IWallet | null = await new Promise((resolve) => {
+        const recipientWallet = await new Promise<IWallet | null>((resolve) => {
           this.kafkaDataPromiseResolve = resolve as (value: unknown) => void;
+
+          this.kafkaProducer.send({
+            topic: 'wallet-events',
+            messages: [
+              {
+                value: JSON.stringify({
+                  action: 'getWalletDataQR',
+                  payload: { userId: transaction.toWallet }
+                })
+              }
+            ]
+          });
+
+          CustomLogger.info(`Wallet data requested from Kafka for user: ${transaction.toWallet}`);
+
+          // Set a timeout to resolve with null if no data is received
           setTimeout(() => {
             if (this.kafkaDataPromiseResolve) {
+              CustomLogger.warn(`Timeout reached while waiting for wallet data for user: ${transaction.toWallet}`);
               this.kafkaDataPromiseResolve(null);
               this.kafkaDataPromiseResolve = null;
             }
@@ -273,22 +315,27 @@ export class QRPaymentController {
           return;
         }
 
-        this.kafkaProducer.send({
-          topic: 'wallet-events',
-          messages: [
-            {
-              value: JSON.stringify({
-                action: 'getWalletDataQR',
-                payload: { userId: payerId }
-              })
-            }
-          ]
-        });
-
-        const payerWallet: IWallet | null = await new Promise((resolve) => {
+        const payerWallet = await new Promise<IWallet | null>((resolve) => {
           this.kafkaDataPromiseResolve = resolve as (value: unknown) => void;
+
+          this.kafkaProducer.send({
+            topic: 'wallet-events',
+            messages: [
+              {
+                value: JSON.stringify({
+                  action: 'getWalletDataQR',
+                  payload: { userId: payerId }
+                })
+              }
+            ]
+          });
+
+          CustomLogger.info(`Wallet data requested from Kafka for user: ${payerId}`);
+
+          // Set a timeout to resolve with null if no data is received
           setTimeout(() => {
             if (this.kafkaDataPromiseResolve) {
+              CustomLogger.warn(`Timeout reached while waiting for wallet data for user: ${payerId}`);
               this.kafkaDataPromiseResolve(null);
               this.kafkaDataPromiseResolve = null;
             }
